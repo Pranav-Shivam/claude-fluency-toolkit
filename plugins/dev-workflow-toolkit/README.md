@@ -7,6 +7,7 @@ Engineering principles, safety hooks, and commit/PR/learning commands for AI-ass
 - **Skill: `engineering-principles`** — five principles (clarify before building, lean code, bounded edits, outcome-oriented execution, verify and recover) plus common failure modes. Loaded automatically as context; no invocation needed.
 - **Command: `/git-commit`** — reads the staged diff and drafts a Conventional Commits message. Runs on Haiku, model-invocation disabled (must be explicitly called).
 - **Command: `/pr-description`** — diffs against the default branch and drafts a PR description (What changed / Why / Testing).
+- **Command: `/review-diff [base-branch]`** — reviews a diff against `engineering-principles`: scope creep, architectural consistency, silently undone reasoning (reverted deliberate fixes/ADRs), phantom APIs, bounded edits, verification, and security-adjacent risk with blast radius. Reads git blame/history and any ADRs before judging, tags each finding High/Medium/Low confidence, and drops low-signal noise rather than padding the report.
 - **Command: `/learn`** — reviews the session for non-obvious lessons and appends them to `docs/gotchas.md`.
 - **Hooks:**
   - `SessionStart` → prints current branch, uncommitted file count, last commit, stash count.
