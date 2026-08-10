@@ -1,0 +1,27 @@
+{
+  "name": "claude-fluency-toolkit",
+  "owner": { "name": "Pranav Shivam" },
+  "description": "Reusable Claude Code plugins for AI-assisted engineering workflows: principles + safety hooks, a security-scan agent fleet, Azure DevOps companion skills, and document generation.",
+  "plugins": [
+    {
+      "name": "dev-workflow-toolkit",
+      "source": "./plugins/dev-workflow-toolkit",
+      "description": "Engineering principles, safety hooks, and commit/PR/learning commands."
+    },
+    {
+      "name": "security-scan-toolkit",
+      "source": "./plugins/security-scan-toolkit",
+      "description": "A 10-agent security audit fleet orchestrated by /security-scan."
+    },
+    {
+      "name": "devops-companion",
+      "source": "./plugins/devops-companion",
+      "description": "Knowledge-graph and Azure DevOps PR review/comment skills."
+    },
+    {
+      "name": "doc-generation-toolkit",
+      "source": "./plugins/doc-generation-toolkit",
+      "description": "Generate Minutes of Meeting via /mom and PowerPoint decks via /create-pptx from source documents."
+    }
+  ]
+}

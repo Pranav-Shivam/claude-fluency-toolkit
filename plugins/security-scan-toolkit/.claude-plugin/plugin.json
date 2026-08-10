@@ -1,0 +1,6 @@
+{
+  "name": "security-scan-toolkit",
+  "version": "0.1.0",
+  "description": "A 10-agent security audit fleet — auth, config, crypto/TLS, data exposure, database, dependencies, IaC/containers, RBAC, SAST, and secrets — orchestrated by /security-scan.",
+  "author": { "name": "Pranav Shivam" }
+}
