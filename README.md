@@ -45,6 +45,39 @@ of these at once will run just the first and silently drop the rest:
 There's no bulk-install or marketplace-wide install command — each plugin must be installed
 individually.
 
+## Uninstall
+
+To remove all plugins and the marketplace itself, uninstall every plugin first, then remove
+the marketplace last. Same one-command-per-message rule applies. Remove a plugin:
+
+```text
+/plugin uninstall dev-workflow-toolkit@claude-fluency-toolkit
+```
+
+Repeat for whichever else you installed:
+
+```text
+/plugin uninstall security-scan-toolkit@claude-fluency-toolkit
+```
+
+```text
+/plugin uninstall devops-companion@claude-fluency-toolkit
+```
+
+```text
+/plugin uninstall doc-generation-toolkit@claude-fluency-toolkit
+```
+
+```text
+/plugin uninstall timesheet-toolkit@claude-fluency-toolkit
+```
+
+To drop the marketplace itself (only after removing its plugins):
+
+```text
+/plugin marketplace remove claude-fluency-toolkit
+```
+
 Or, testing from a local clone before pushing:
 
 ```
