@@ -1,0 +1,6 @@
+{
+  "name": "timesheet-toolkit",
+  "version": "0.1.0",
+  "description": "Generates daily timesheet entries from git history and file modification timestamps across your configured repos, via /timesheet.",
+  "author": { "name": "Pranav Shivam" }
+}

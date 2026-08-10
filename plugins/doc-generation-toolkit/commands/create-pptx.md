@@ -27,17 +27,19 @@ Read the entire extracted content first. Identify:
 - Concrete facts worth calling out: names, project names, technical terms, numbers, dates, metrics — carry these forward verbatim, never paraphrased into something looser or rounder.
 - Where a table, timeline, simple chart, or basic flow diagram would communicate better than bullet text — only where the source actually contains that shape of information (a real table of numbers, a real chronological sequence, a real before/after comparison). Never invent structure the source doesn't support.
 
+Where the source refers to a specific value but never states it — an owner, a date, a figure, a status — write **TBD** in that slot rather than inferring a plausible one. A TBD on a slide is correct; a guessed name, date, or number is a defect. If a whole planned slide would be mostly TBD, drop the slide instead and note the gap in your final report.
+
 ## 3. Plan the outline before building anything
 
 Write out an explicit slide plan: slide number → title → the bullet points or visual element it will contain, and which source section it maps back to. Slide count should follow content density — don't force a fixed number, and don't cram unrelated points onto one slide just to hit a lower count. Every bullet on every slide must trace back to something actually present in the source; if you can't point to where it came from, cut it.
 
 Do not lift large paragraphs verbatim — restructure into short, presentation-friendly bullets. A slide with a wall of prose has failed at this step; go back and compress it.
 
-## 4. Apply the template, if one was given
+## 4. Set up the base presentation
 
-The template must be a `.pptx` file — if the path given doesn't end in `.pptx`, say so and stop rather than guessing what was meant.
+Confirm `python-pptx` is importable first (`python3 -c "import pptx"`) — this is required whether or not a template was given; if it fails, tell the user to `pip install python-pptx` and stop rather than attempting generation without it.
 
-Use `python-pptx` to build the deck. Confirm it's importable first (`python3 -c "import pptx"`); if that fails, tell the user to `pip install python-pptx` and stop — don't attempt generation without it.
+If a template was given it must be a `.pptx` file — if the path doesn't end in `.pptx`, say so and stop rather than guessing what was meant.
 
 - **With `--template`:** open the template itself as the base presentation (`Presentation('<template>')`), not a blank one — this carries over its slide master, theme, fonts, colors, and any header/footer/logo placeholders already defined there. Enumerate `prs.slide_layouts` to see what layouts the template actually offers, and pick the closest matching layout for each planned slide (title layout for the opening slide, a title+content layout for body slides, etc.) rather than assuming layout indices from a different template. If the template file itself contains sample/demo slides beyond its layouts, don't carry those into the output — only reuse the master/layout definitions, add your own slides on top.
 - **Without `--template`:** build on a blank `Presentation()`, but still commit to one consistent look across every slide — a single font family, one accent color, consistent title placement and bullet indentation. Pick sensible neutral defaults; don't invent a "brand" that wasn't asked for.
@@ -56,4 +58,4 @@ Save the file alongside the content file, named `<content-file-basename>.pptx` �
 
 ## 6. Report back
 
-State: the saved file path, the final slide count, and one line per slide summarizing its content. Confirm explicitly that every fact/figure in the deck traces back to the source file — if the `.docx` fallback in step 1 lost some structure, mention that too.
+State: the saved file path, the final slide count, and one line per slide summarizing its content. Confirm explicitly that every fact/figure in the deck traces back to the source file, and list anything left as **TBD** or any slide dropped for lack of source material. If the `.docx` fallback in step 1 lost some structure, mention that too.

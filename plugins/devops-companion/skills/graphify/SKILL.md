@@ -18,8 +18,8 @@ Turns a folder of code (or docs, or any structured text) into a navigable knowle
 5. **Emit outputs:**
    - `GRAPH_REPORT.md` — a human-readable summary: node/edge counts, the list of detected communities with their member nodes, the top hub nodes and their edge counts, and any structural observations (isolated nodes, unusually dense clusters, cross-community edges that look like layering violations).
    - An HTML visualization — an interactive node/edge graph, colored by community, that can be opened directly in a browser.
-   - A JSON export — the raw graph (nodes, edges, community assignments) so it can be diffed between runs or consumed by other tooling.
-6. **Support incremental updates.** Re-running against a folder that changed only slightly should be cheaper than a full rebuild — recompute edges only for changed files where the underlying tooling supports incremental analysis, and only fall back to a full rebuild when the incremental path isn't available or the change is broad.
+   - A JSON export — the raw graph as `nodes` (stable id, source path, kind, community id, edge count) and `edges` (source id, target id, relationship kind), so runs can be diffed against each other or consumed by other tooling. Keep node ids stable across runs — derive them from the source path plus symbol name, not from iteration order — or diffing between runs is meaningless.
+6. **Support incremental updates.** Re-running against a folder that changed only slightly should be cheaper than a full rebuild. Use the previous JSON export as the cache: compare file hashes or mtimes to find changed files, drop and recompute the nodes and outgoing edges for those files only, then merge back into the cached graph. Community detection and hub ranking are global properties, so re-run those over the merged graph rather than trying to patch them. Fall back to a full rebuild when there's no prior export, when the analysis tooling can't scope to a file subset, or when the changed set is large enough that the merge costs more than a rescan.
 
 ## When to use this over grep
 

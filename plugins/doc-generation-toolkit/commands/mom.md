@@ -30,13 +30,15 @@ Read the full transcript before writing anything. Identify:
 - Blockers, risks, or open questions raised but not resolved.
 - Follow-ups or next steps mentioned for after the meeting.
 
-If an action item's owner or deadline is not stated or is genuinely ambiguous in the transcript, write **TBD** — never infer or guess a name or date that isn't actually there. Preserve people's names, project names, technical terms, and dates exactly as they appear in the transcript; don't paraphrase a proper noun or a specific figure.
+If an action item's owner or deadline is not stated or is genuinely ambiguous in the transcript, write **TBD** — never infer or guess a name or date that isn't actually there. The same applies anywhere else the transcript refers to a specific value without stating it (a figure, a system name, a target date): **TBD** is the correct answer, a plausible guess is a defect. Preserve people's names, project names, technical terms, and dates exactly as they appear in the transcript; don't paraphrase a proper noun or a specific figure.
 
 Strip filler, small talk, repetition, and back-and-forth that didn't lead to a point, decision, or action — the MoM should read as the substance of the meeting, not a transcript summary of the conversation's flow.
 
 ## 3. Output format
 
-Produce the MoM as clean Markdown, ready to paste into an email or doc and share as-is — no meta-commentary about how it was generated, no "here is your MoM" preamble.
+Print the MoM directly in your response as clean Markdown, ready to paste into an email or doc and share as-is — no meta-commentary about how it was generated, no "here is your MoM" preamble. Don't write it to a file unless the user asked for one; if they did, save it next to the transcript as `<transcript-basename>-mom.md` and state the path.
+
+Use exactly these sections, in this order:
 
 ```markdown
 # Minutes of Meeting — <title/date if stated in transcript, else omit line>

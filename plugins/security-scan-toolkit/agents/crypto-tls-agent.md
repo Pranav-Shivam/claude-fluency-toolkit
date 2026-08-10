@@ -17,7 +17,11 @@ Focus areas:
 - Randomness: use of a non-cryptographic PRNG (e.g. language-default `random`) for tokens, session IDs, password-reset codes, or nonces — these must use a CSPRNG.
 - TLS configuration in code (not just infra): certificate validation disabled or overridden (`verify=False`, custom trust-everything validators), outdated minimum TLS version pinned in a client.
 
-If a live, reachable HTTPS endpoint is configured for this project (check config/docs for a base URL) and `sslyze` is available, run it against that endpoint to check protocol versions, cipher suites, and certificate validity. Skip this step entirely — don't guess a hostname — if no endpoint is clearly documented as belonging to this project.
+Find the crypto surface with `Grep` rather than by reading whole files: search for the standard library and package entry points (`hashlib`, `md5`, `sha1`, `crypto.createHash`, `Cipher`, `AES`, `random.`, `Math.random`, `secrets.`, `os.urandom`, `jwt`, `verify=False`, `rejectUnauthorized`, `InsecureSkipVerify`, `ssl_version`, `TLSv1`), then read each call site to judge whether the use is security-sensitive. A fast hash used for a cache key or an ETag is not a finding; the same call used for a password or a signature is.
+
+If a live, reachable HTTPS endpoint is configured for this project (check README, deployment config, or a documented base URL) and `sslyze` is available, run `sslyze <host>:443` against it to check protocol versions, cipher suites, and certificate validity. Skip this step entirely — don't guess a hostname, and don't scan a host you can't confirm belongs to this project — if no endpoint is clearly documented. State which it was in your report: endpoint scanned, no endpoint documented, or endpoint documented but `sslyze` not installed (a coverage gap the orchestrator needs to know about). The same applies to static analysis: if you could only review crypto usage by reading code, say so rather than implying the deployed TLS posture was verified.
+
+Stay in your lane: a hardcoded key is reported here as a *crypto* problem (key committed alongside the data it protects, no rotation path) while `secrets-agent` owns finding and rotating the credential itself, and `auth-agent` owns the auth-flow consequences of a JWT weakness — report the algorithm-level defect and let the orchestrator merge the overlap rather than omitting it.
 
 Report every finding as:
 ```

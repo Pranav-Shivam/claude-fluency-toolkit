@@ -1,7 +1,7 @@
 {
   "name": "claude-fluency-toolkit",
   "owner": { "name": "Pranav Shivam" },
-  "description": "Reusable Claude Code plugins for AI-assisted engineering workflows: principles + safety hooks, a security-scan agent fleet, Azure DevOps companion skills, and document generation.",
+  "description": "Reusable Claude Code plugins for AI-assisted engineering workflows: principles + safety hooks, a security-scan agent fleet, Azure DevOps companion skills, document generation, and timesheet generation.",
   "plugins": [
     {
       "name": "dev-workflow-toolkit",
@@ -22,6 +22,11 @@
       "name": "doc-generation-toolkit",
       "source": "./plugins/doc-generation-toolkit",
       "description": "Generate Minutes of Meeting via /mom and PowerPoint decks via /create-pptx from source documents."
+    },
+    {
+      "name": "timesheet-toolkit",
+      "source": "./plugins/timesheet-toolkit",
+      "description": "Generate daily timesheet entries from git history and file timestamps across your configured repos via /timesheet."
     }
   ]
 }

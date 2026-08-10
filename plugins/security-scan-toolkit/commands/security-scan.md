@@ -7,7 +7,7 @@ You are the orchestrator for a full-codebase security scan. You do not do the au
 
 ## Steps
 
-1. **Fan out in parallel** to all 10 domain agents in this plugin, each scoped to its own concern:
+1. **Fan out in parallel** to all 11 domain agents in this plugin, each scoped to its own concern:
    - `auth-agent` — authentication mechanisms
    - `config-agent` — configuration, CORS, security headers, middleware
    - `crypto-tls-agent` — cryptography and TLS
@@ -18,12 +18,13 @@ You are the orchestrator for a full-codebase security scan. You do not do the au
    - `rbac-agent` — RBAC and access control
    - `sast-agent` — static application security testing
    - `secrets-agent` — hardcoded secrets and credential leaks
+   - `lint-agent` — emoji hygiene (style concern, not a vulnerability class)
 
-   Launch all 10 as concurrent subagent calls in a single batch — do not run them sequentially. Each agent reports findings as a list of `{file, line, severity, issue, recommendation}` objects, per its own instructions.
+   Launch all 11 as concurrent subagent calls in a single batch — do not run them sequentially. The 10 security agents report findings as `{file, line, severity, issue, recommendation}`; `lint-agent` reports `{file, line, category, note}` per its own instructions.
 
-2. **Collect** every agent's findings into one pool.
+2. **Collect** every agent's findings into one pool, keeping `lint-agent`'s output separate from the 10 security agents' — it has no severity and doesn't enter the dedup/grading steps below.
 
-3. **Deduplicate.** Multiple agents will legitimately flag the same underlying issue from different angles (e.g. `secrets-agent` and `config-agent` both flagging a hardcoded API key in a config file). Merge findings that point at the same file/line/root cause into a single entry, keeping the most specific `issue` and `recommendation` text and noting which agents concurred.
+3. **Deduplicate** the security findings. Multiple agents will legitimately flag the same underlying issue from different angles (e.g. `secrets-agent` and `config-agent` both flagging a hardcoded API key in a config file). Merge findings that point at the same file/line/root cause into a single entry, keeping the most specific `issue` and `recommendation` text and noting which agents concurred.
 
 4. **Grade every finding** by severity if the source agent didn't already commit to one, using this rubric:
    - **Critical** — directly exploitable, no auth required, or exposes credentials/PII outright (e.g. hardcoded prod secret, SQL injection on an unauthenticated route, auth bypass).
@@ -48,8 +49,11 @@ You are the orchestrator for a full-codebase security scan. You do not do the au
 ## Low (N)
 ...
 
+## Style/Lint (N)
+- **[file:line]** category — note
+
 ## Summary
-Total findings: N. Agents run: 10. Notable patterns across findings, if any.
+Total findings: N. Agents run: 11. Notable patterns across findings, if any.
 ```
 
-Do not editorialize about severity inflation or deflation from any single agent — apply the rubric in step 4 consistently across all of them so the final grouping is comparable.
+Do not editorialize about severity inflation or deflation from any single agent — apply the rubric in step 4 consistently across all of them so the final grouping is comparable. `lint-agent` findings always land in **Style/Lint**, never folded into a severity bucket.

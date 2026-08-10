@@ -1,6 +1,6 @@
 # security-scan-toolkit
 
-A 10-agent security audit fleet orchestrated by `/security-scan`. Each agent owns one domain, reads a matching checklist in `references/`, and reports findings as `{file, line, severity, issue, recommendation}`. The orchestrator fans out to all 10 in parallel, deduplicates overlapping findings, grades severity consistently, and produces one report grouped by severity.
+An 11-agent audit fleet orchestrated by `/security-scan`. Each agent owns one domain, reads a matching checklist in `references/`, and reports findings. The 10 security agents report `{file, line, severity, issue, recommendation}`; `lint-agent` reports `{file, line, category, note}`. The orchestrator fans out to all 11 in parallel, deduplicates and severity-grades the 10 security agents' findings, and produces one report grouped by severity — with `lint-agent`'s style findings in their own section, never folded into a severity bucket.
 
 ## Agents
 
@@ -16,6 +16,7 @@ A 10-agent security audit fleet orchestrated by `/security-scan`. Each agent own
 | `rbac-agent` | RBAC and object-level authorization |
 | `sast-agent` | Static analysis via `bandit`/`semgrep` plus manual pattern review |
 | `secrets-agent` | Hardcoded credentials, including git history, via `trufflehog`/`gitleaks`/`detect-secrets` |
+| `lint-agent` | Emoji hygiene — style concern, reported separately from severity-graded findings |
 
 ## Setup prerequisites
 
@@ -33,8 +34,4 @@ None of the external scanning tools are bundled — each agent runs whichever of
 /security-scan
 ```
 
-Runs the full fleet against the current repo and returns one consolidated report grouped by severity (critical/high/medium/low).
-
-## Note on scope
-
-The source material this plugin was drafted from described "10 security subagents" but listed 11 agent names, including an `emoji-agent` (flags emoji characters in code, with extra scrutiny for emoji inside SQL strings or cloud-service queries due to encoding risk). That's a style/lint concern, not a security concern, so it was left out of this plugin. If you want it back, it fits better as a standalone lint-toolkit plugin than inside a security fleet.
+Runs the full fleet against the current repo and returns one consolidated report grouped by severity (critical/high/medium/low), plus a separate Style/Lint section from `lint-agent`.
