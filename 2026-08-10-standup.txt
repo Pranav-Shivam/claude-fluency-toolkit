@@ -1,0 +1,178 @@
+Transformer Model Architecture Review - Sprint Planning-20260811_143000-Meeting Recording
+August 11, 2026, 2:30PM
+38m 12s
+
+Reddy, Vikram started transcription
+
+Reddy, Vikram   0:04
+Alright, recording's on. So today's agenda, we want to lock down the attention mechanism choice for the doc-classification model, talk through the fine-tuning budget, and figure out our deployment timeline. Nisha, you want to kick off with where the encoder work landed?
+
+Fernandes, Nisha   0:22
+Sure. So we benchmarked three options this week. Vanilla multi-head attention, the sliding-window variant, and grouped-query attention. For our sequence lengths, which are mostly under 2000 tokens, vanilla multi-head is actually fine on latency. The sliding window only helps once we're past like 8k tokens.
+
+Okafor, Daniel   0:51
+Right, but doesn't grouped-query attention save us on memory during inference even at shorter sequences? I thought that was the whole point, fewer KV heads.
+
+Fernandes, Nisha   1:03
+It does help memory, yeah. GQA cut our KV cache by about 60% in the test run. But we saw a small accuracy dip, like half a point on the eval set. Given we're not memory constrained on the current GPU allocation, I'd lean toward keeping full multi-head for now and revisiting GQA once we scale up the context window.
+
+Reddy, Vikram   1:29
+Okay, that's a reasonable call. Priya, what's your take from the training side?
+
+Sharma, Priya   1:36
+I agree with holding off on GQA for this release. My bigger concern is actually the layer count. We're at 24 layers right now and training is taking almost 30 hours on the current cluster. If we're doing multiple fine-tuning passes for the different domains, that adds up fast.
+
+Okafor, Daniel   1:58
+Can we get away with fewer layers? Have we tried a 16-layer version and compared?
+
+Sharma, Priya   2:05
+We haven't tried it on this dataset specifically, but on a similar internal benchmark last quarter, going from 24 to 16 layers cost us around 2% on the harder classification categories. It wasn't uniform across categories though, the ambiguous ones took the bigger hit.
+
+Reddy, Vikram   2:27
+So it's a tradeoff between training cost and accuracy on the harder categories. Daniel, how important are those harder categories for the launch use case?
+
+Okafor, Daniel   2:38
+Pretty important actually, that's like 30% of the ticket volume we're trying to auto-classify. I don't think we can afford to lose 2% there.
+
+Sharma, Priya   2:47
+Yeah, that's what I figured. So my recommendation is we keep 24 layers but optimize elsewhere. We could look at mixed precision training, we're still on FP32 for a chunk of the pipeline. Switching that to BF16 should cut training time significantly without touching accuracy much.
+
+Reddy, Vikram   3:10
+Do we have someone who's done that migration before?
+
+Sharma, Priya   3:14
+I did it on a smaller project last year. It's mostly config changes plus checking for any custom loss functions that assume FP32 precision. I can take that on this week.
+
+Reddy, Vikram   3:26
+Great, let's put that as an action item for you. What's the realistic time savings?
+
+Sharma, Priya   3:32
+Rough estimate, 30 to 40% faster training. So instead of 30 hours we're looking at maybe 18 to 21 hours per run.
+
+Fernandes, Nisha   3:44
+That would help a lot with iteration speed honestly. Right now we can barely do one experiment a day.
+
+Reddy, Vikram   3:51
+Agreed, let's prioritize that. Okay, moving to positional encoding. I saw in the doc there was a question about whether we stick with learned positional embeddings or move to rotary embeddings.
+
+Fernandes, Nisha   4:07
+Yeah so RoPE, rotary position embeddings, generally generalizes better to sequence lengths the model hasn't seen during training. Since we know we'll eventually need to handle longer documents, like full contracts instead of just summaries, I think RoPE is the safer long-term choice.
+
+Okafor, Daniel   4:28
+Is there a cost to switching now versus later? Like are we locking ourselves out of anything if we start with learned embeddings and swap later?
+
+Fernandes, Nisha   4:37
+Swapping later basically means retraining from scratch, you can't easily convert a checkpoint from learned embeddings to rotary. So if we're fairly confident we'll need long-context support eventually, better to eat that cost now while the model is smaller and cheaper to train.
+
+Sharma, Priya   4:56
+I'd second that. We just went through a similar pain on the earlier summarization model. We started with learned embeddings, then had to redo everything when the long-document requirement came in. Would rather not repeat that.
+
+Reddy, Vikram   5:11
+Okay, sounds like consensus. We go with RoPE. Nisha, can you update the architecture doc and flag this decision with the reasoning for anyone joining the project later?
+
+Fernandes, Nisha   5:23
+Yep, will do that today.
+
+Reddy, Vikram   5:26
+Let's talk fine-tuning strategy next. Are we doing full fine-tuning or LoRA for the domain adaptation?
+
+Okafor, Daniel   5:35
+I'd push for LoRA. We have five different domains we need to adapt to eventually, legal, financial, HR, and two more coming later this year. Full fine-tuning means we're maintaining five separate full model checkpoints, that's a storage and deployment headache.
+
+Sharma, Priya   5:54
+LoRA also trains way faster since we're only updating a small fraction of parameters. On the earlier project, LoRA adapters trained in about a tenth of the time of full fine-tuning, with only a small accuracy gap, under 1 point in most cases.
+
+Reddy, Vikram   6:13
+Any domains where LoRA underperformed badly?
+
+Sharma, Priya   6:18
+Financial was the one domain where we saw a bigger gap, almost 3 points. It's a pretty specialized vocabulary. So we might want to do a higher-rank LoRA adapter for that one specifically, or consider full fine-tuning just for financial if the gap doesn't close.
+
+Reddy, Vikram   6:37
+Okay, let's start with LoRA across all domains, rank 16 as the baseline, and flag financial for a follow-up rank comparison if the eval numbers come in low. Daniel, can you own tracking the eval numbers per domain once training starts?
+
+Okafor, Daniel   6:54
+Yeah, I'll set up a dashboard for that, should be able to have something basic by end of week.
+
+Reddy, Vikram   7:01
+Perfect. Let's talk deployment now. What's the current plan for serving this model?
+
+Fernandes, Nisha   7:09
+Right now the plan is to containerize it and deploy behind the existing inference gateway, same pattern as the summarization model. Question is whether we do dynamic batching or keep it simple with single-request inference for the first release.
+
+Okafor, Daniel   7:26
+Given our latency requirements, I don't think we can skip batching honestly. Ticket classification volume spikes are pretty bursty, especially Monday mornings.
+
+Fernandes, Nisha   7:36
+That's fair. Dynamic batching adds complexity though, we'd need to tune the max batch size and the wait window carefully or we risk adding latency instead of reducing it.
+
+Reddy, Vikram   7:48
+What's a reasonable first attempt at those numbers?
+
+Fernandes, Nisha   7:53
+I'd start conservative, max batch size of 8, wait window of maybe 50 milliseconds. We can tune from there once we see real traffic patterns.
+
+Reddy, Vikram   8:03
+Okay let's go with that as a starting point and revisit after two weeks of production traffic. Anything else blocking deployment?
+
+Okafor, Daniel   8:12
+One thing, we still need to decide on quantization. Are we shipping this in FP16 or going down to INT8?
+
+Sharma, Priya   8:20
+I'd say FP16 for the first release. INT8 quantization sometimes needs calibration data specific to each domain, and we don't have clean calibration sets for all five domains yet. I don't want to introduce quantization error on top of everything else we're changing this sprint.
+
+Reddy, Vikram   8:38
+Agreed, let's keep it simple. FP16 for now, INT8 as a future optimization once things stabilize.
+
+Fernandes, Nisha   8:46
+Sounds good. I'll note that as a backlog item.
+
+Reddy, Vikram   8:50
+Alright, let's talk about the evaluation set itself for a second, because I want to make sure we're not just optimizing against a bad benchmark. Daniel, how confident are we in the current eval set quality?
+
+Okafor, Daniel   9:03
+Honestly, medium confidence. It was built pretty quickly six months ago and hasn't been refreshed. There's definitely some label noise, we found a handful of mislabeled examples last month when someone was doing error analysis.
+
+Reddy, Vikram   9:19
+How many mislabeled, roughly, do we know?
+
+Okafor, Daniel   9:23
+We only spot-checked about 200 out of the 3000 examples, and found around 14 issues. So extrapolating, could be somewhere around 200 mislabeled examples total, that's a rough estimate though, not a real audit.
+
+Sharma, Priya   9:39
+That's actually a meaningful amount of noise if we're trying to measure things like that 2% layer-count tradeoff we talked about earlier. A post-training audit might change our earlier decision.
+
+Reddy, Vikram   9:52
+Good point. Let's not redo the whole eval set right now, that's too much scope for this sprint, but I want a proper audit scheduled. Daniel, can you own scoping that, maybe get a sample of 500 examples reviewed by two people independently so we get an actual noise estimate?
+
+Okafor, Daniel   10:11
+Yeah, I can put that together. I'll need to pull in someone from the labeling team, I don't think we have bandwidth to do it fully in-house.
+
+Reddy, Vikram   10:19
+Fine, flag that as a resourcing ask separately, don't block this sprint on it. Let's move to timeline. When are we targeting for first production traffic?
+
+Fernandes, Nisha   10:31
+If the BF16 migration goes smoothly and RoPE integration doesn't hit surprises, I think we can have a trained model ready for internal testing in about two weeks.
+
+Sharma, Priya   10:43
+I'd agree with two weeks for training completion, assuming no major blockers. Deployment prep, the batching tuning and gateway integration, probably adds another week on top of that.
+
+Reddy, Vikram   10:56
+So realistically three weeks to first production traffic, call it end of month. Let's set that as the target and I'll communicate it up. Anything I'm missing before we wrap?
+
+Okafor, Daniel   11:09
+Just one thing, we should double check whether legal has signed off on using their historical tickets for the financial domain LoRA training, since some of that data crosses over between legal and financial categories.
+
+Reddy, Vikram   11:23
+Good catch, I'll follow up with legal on data usage sign-off before training starts on that domain. Anything else? Alright, let's leave it there. Thanks everyone, I'll circulate notes and we can sync again next week on progress.
+
+Sharma, Priya   11:41
+Sounds good, thanks.
+
+Fernandes, Nisha   11:43
+Thanks, bye.
+
+Okafor, Daniel   11:44
+Later, thanks.
+
+Reddy, Vikram stopped transcription
