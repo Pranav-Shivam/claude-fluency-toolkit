@@ -1,6 +1,0 @@
-{
-  "name": "devops-companion",
-  "version": "0.1.0",
-  "description": "Knowledge-graph interface skill plus Azure DevOps PR review and PR comment skills.",
-  "author": { "name": "Pranav Shivam" }
-}
