@@ -1,6 +1,0 @@
-{
-  "name": "doc-generation-toolkit",
-  "version": "0.1.0",
-  "description": "Generates shareable documents from source material: Minutes of Meeting from a transcript via /mom, PowerPoint decks from content files via /create-pptx, and Architecture Decision Records via /adr.",
-  "author": { "name": "Pranav Shivam" }
-}

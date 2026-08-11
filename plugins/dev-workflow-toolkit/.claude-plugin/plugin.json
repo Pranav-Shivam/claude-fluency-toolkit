@@ -1,6 +1,0 @@
-{
-  "name": "dev-workflow-toolkit",
-  "version": "0.1.0",
-  "description": "Engineering principles skill, git safety hooks, and commit/PR/review/learning commands for day-to-day AI-assisted development.",
-  "author": { "name": "Pranav Shivam" }
-}

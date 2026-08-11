@@ -1,6 +1,0 @@
-{
-  "name": "security-scan-toolkit",
-  "version": "0.1.0",
-  "description": "An 11-agent audit fleet — auth, config, crypto/TLS, data exposure, database, dependencies, IaC/containers, RBAC, SAST, secrets, and emoji lint — orchestrated by /security-scan.",
-  "author": { "name": "Pranav Shivam" }
-}

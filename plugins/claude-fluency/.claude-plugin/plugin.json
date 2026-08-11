@@ -1,0 +1,6 @@
+{
+  "name": "claude-fluency",
+  "version": "0.1.0",
+  "description": "Unified Claude Code toolkit: engineering principles + safety hooks, an 11-agent security audit fleet, Azure DevOps/knowledge-graph skills, document generation (MoM/PPTX/ADR), and timesheet generation.",
+  "author": { "name": "Pranav Shivam" }
+}
