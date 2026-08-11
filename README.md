@@ -12,7 +12,7 @@ A Claude Code plugin marketplace with one plugin — `claude-fluency` — bundli
 | Document generation | `/mom <file>` turns a transcript into a structured Minutes of Meeting. `/create-pptx <file> [--template <file>]` turns a content file into a `.pptx` deck, reusing a template's header/footer/branding if given. `/adr` drafts an Architecture Decision Record from the current conversation/diff. All preserve source facts exactly and never invent what's missing. |
 | Timesheet | `/timesheet` generates ready-to-paste daily timesheet entries from git history and file-modification timestamps across your configured repos. Config-driven — no hardcoded paths, authors, or names. |
 
-See [`plugins/claude-fluency/README.md`](plugins/claude-fluency/README.md) for full command/skill reference and per-tool prerequisites.
+See [`plugins/claude-fluency/README.md`](plugins/claude-fluency/README.md) for full command/skill reference and per-tool prerequisites, or [`HOWTOUSE.md`](HOWTOUSE.md) for a worked example of every command, skill, and agent.
 
 ## Install
 
