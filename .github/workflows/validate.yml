@@ -1,0 +1,29 @@
+name: Validate plugin
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check marketplace.json and plugin.json are valid JSON
+        run: |
+          jq empty .claude-plugin/marketplace.json
+          jq empty plugins/claude-fluency/.claude-plugin/plugin.json
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Validate marketplace + plugin schema
+        run: claude plugin validate .

@@ -42,7 +42,7 @@ claude plugin validate .
 /plugin install claude-fluency@claude-fluency-toolkit
 ```
 
-## One plugin vs. several
+## One plugin vs. several — decided, stays this way
 
 <!--
 RATIONALE: bundled into one plugin (2026-08, commit 8296636) to cut install friction — five
@@ -51,13 +51,17 @@ anyone who only wants /timesheet also gets the 11-agent security fleet, the glob
 hook, and the session-start banner, with no way to opt out short of a full uninstall. No well-starred
 marketplace repo surveyed bundles unrelated domains this way — the common patterns are many small
 plugins (wshobson/agents, trailofbits/skills-curated) or a handful grouped by coherent role
-(LerianStudio/ring's 4 plugins-by-team). The schema already supports a middle path without moving
-a single file: `strict: false` in plugin.json plus per-entry `source` subdirectories lets
-marketplace.json register multiple plugin entries against this same tree. Revisit before adding a
-sixth unrelated toolkit — don't just keep bundling by default.
+(LerianStudio/ring's 4 plugins-by-team). The schema supports a middle path without moving a single
+file: `strict: false` in plugin.json plus per-entry `source` subdirectories would let marketplace.json
+register 5 plugin entries against this same tree.
+Decision (2026-08-22): keep it bundled. The friction the split fixes (unwanted agents/hooks) is real
+but smaller than the friction it adds (most people trying this repo run one command once, not five
+separate install steps first) — one-install-does-everything wins for that audience even though it
+isn't the majority pattern among well-starred marketplaces. Not a placeholder — don't split this
+without a new, different reason than "best practice says so."
 -->
 
-Current state: one marketplace entry, one plugin, five unrelated toolkits (engineering workflow, security, devops, document generation, timesheet). This was a deliberate tradeoff, not an oversight — see the comment above for the reasoning and the documented way out.
+Current state, and the intended state: one marketplace entry, one plugin, five unrelated toolkits (engineering workflow, security, devops, document generation, timesheet). See the comment above for why, and why it's staying this way.
 
 ## Documentation
 
@@ -69,11 +73,11 @@ Current state: one marketplace entry, one plugin, five unrelated toolkits (engin
 
 ## What "done" means here
 
-No CI, no test harness — every command/agent/skill is a prose file with no automated way to check it works. "Verify before claiming done" (`engineering-principles` principle 5) means, concretely: install the plugin from a local marketplace add in a scratch project and actually run the new/changed command, skill, or agent before calling the change finished.
+CI (`.github/workflows/validate.yml`) checks `marketplace.json`/`plugin.json` are valid JSON and pass `claude plugin validate .` on every push and PR — that only catches schema errors, not behavior. There's still no test harness for what a command/agent/skill actually *does*: every one is a prose file with no automated way to check its output is right. "Verify before claiming done" (`engineering-principles` principle 5) means, concretely: install the plugin from a local marketplace add in a scratch project and actually run the new/changed command, skill, or agent before calling the change finished. CI passing is necessary, not sufficient.
 
 ## Not in this file, and why
 
 - **Exact command/skill/agent counts** — go stale the moment someone adds one; see the map above.
-- **A CI setup guide** — there is no CI yet. Adding one is an open decision, not a documented convention.
+- **A CI setup guide** — CI exists (`.github/workflows/validate.yml`); it's short enough to just read.
 - **PR-platform credential setup** (GitHub/GitLab/Azure DevOps tokens) — that's end-user setup, not a rule for editing this repo; it lives in `/pr-setup` and the `pr-review`/`pr-comments` skill files instead.
 - **A tutorial on how Claude Code plugins work in general** — that's Anthropic's docs, not this repo's.
