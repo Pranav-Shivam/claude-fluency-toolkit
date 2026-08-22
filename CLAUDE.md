@@ -8,14 +8,16 @@ Marketplace repo, one plugin (`claude-fluency`) at `plugins/claude-fluency/`. Re
 .claude-plugin/marketplace.json          marketplace + plugin list
 plugins/claude-fluency/
   .claude-plugin/plugin.json             plugin manifest (name, version, description, author)
-  commands/*.md                          8 slash commands
-  skills/<name>/SKILL.md                 5 skills (auto-loaded or invoked by name)
-  agents/*-agent.md                      11-agent security fleet, fanned out by /security-scan
+  commands/*.md                          slash commands, one file per command
+  skills/<name>/SKILL.md                 skills, auto-loaded or invoked by name
+  agents/*-agent.md                      security fleet, fanned out by /security-scan
   references/*-agent-checklist.md        1:1 checklist per security agent
   hooks/hooks.json + scripts/*.sh        SessionStart, PreToolUse(Bash), Stop, TaskCompleted
-  README.md, HOWTOUSE.md                 ship with the plugin — end-user facing
+  README.md, HOWTOUSE.md, CHANGELOG.md   ship with the plugin — end-user facing
 README.md                                repo landing page (GitHub only, does not ship)
 ```
+
+Exact counts aren't listed here on purpose — they drift with every added command/skill/agent, and a stale count is worse than none. Run `ls plugins/claude-fluency/commands` etc. if you need the real number.
 
 **Directory contract**: `commands/`, `skills/`, `agents/`, `hooks/` must sit at the plugin root (next to `.claude-plugin/`), never inside it. The loader auto-discovers by folder name and location — no manifest entry needed per command/skill/agent. **Editing `marketplace.json` or `plugin.json` is only required for a new plugin entry or a version bump** — never for adding a command/skill/agent to the existing tree.
 
@@ -68,3 +70,10 @@ Current state: one marketplace entry, one plugin, five unrelated toolkits (engin
 ## What "done" means here
 
 No CI, no test harness — every command/agent/skill is a prose file with no automated way to check it works. "Verify before claiming done" (`engineering-principles` principle 5) means, concretely: install the plugin from a local marketplace add in a scratch project and actually run the new/changed command, skill, or agent before calling the change finished.
+
+## Not in this file, and why
+
+- **Exact command/skill/agent counts** — go stale the moment someone adds one; see the map above.
+- **A CI setup guide** — there is no CI yet. Adding one is an open decision, not a documented convention.
+- **PR-platform credential setup** (GitHub/GitLab/Azure DevOps tokens) — that's end-user setup, not a rule for editing this repo; it lives in `/pr-setup` and the `pr-review`/`pr-comments` skill files instead.
+- **A tutorial on how Claude Code plugins work in general** — that's Anthropic's docs, not this repo's.
