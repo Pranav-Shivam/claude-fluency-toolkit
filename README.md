@@ -8,7 +8,7 @@ A Claude Code plugin marketplace with one plugin — `claude-fluency` — bundli
 |---|---|
 | Engineering workflow | An engineering-principles skill, `/git-commit` and `/pr-description` commands, `/review-diff` for principle-based diff review, a `/learn` command that logs gotchas, and safety hooks (session-start summary, a `Bash` pre-tool guard against destructive commands, cross-platform desktop notifications). |
 | Security | An 11-agent audit fleet (auth, config, crypto/TLS, data exposure, database, dependencies, IaC/containers, RBAC, SAST, secrets, emoji lint) orchestrated by `/security-scan` into one severity-graded report plus a separate style/lint section. |
-| Devops / knowledge graph | A knowledge-graph interface skill (`graphify` — bring your own graph engine) plus Azure DevOps PR review (`pr-review`) and PR comment (`pr-comments`) skills. |
+| Devops / knowledge graph | A knowledge-graph interface skill (`graphify` — bring your own graph engine), PR review (`pr-review`) and PR comment (`pr-comments`) skills covering GitHub/GitLab/Azure DevOps, and `/pr-setup` to check your repo's credentials before using either. |
 | Document generation | `/mom <file>` turns a transcript into a structured Minutes of Meeting. `/create-pptx <file> [--template <file>]` turns a content file into a `.pptx` deck, reusing a template's header/footer/branding if given. `/adr` drafts an Architecture Decision Record from the current conversation/diff. All preserve source facts exactly and never invent what's missing. |
 | Timesheet | `/timesheet` generates ready-to-paste daily timesheet entries from git history and file-modification timestamps across your configured repos. Config-driven — no hardcoded paths, authors, or names. |
 
@@ -49,7 +49,7 @@ Then, to drop the marketplace itself:
 
 - **Engineering workflow hooks** — `jq` on `PATH` (falls back to regex extraction if absent); `bash` for the hook scripts.
 - **Security fleet** — no tool is bundled; each agent uses whichever of `bandit`, `semgrep`, `pip-audit`, `safety`, `npm audit`, `trufflehog`, `gitleaks`, `detect-secrets`, `checkov`, `sslyze` are on `PATH`, and explicitly reports a coverage gap for any that are missing; `lint-agent` needs only `Grep`.
-- **Devops skills** — an Azure DevOps PAT or authenticated `az devops` CLI for `pr-review`/`pr-comments`; a graph-building implementation you supply for `graphify`.
+- **Devops skills** — `pr-review`/`pr-comments` need auth for whichever Git host your repo is on (GitHub, GitLab, or Azure DevOps); run `/pr-setup` to check and get the exact setup command. A graph-building implementation you supply for `graphify`.
 - **Document generation** — `/mom` needs no extra setup for `.txt`/`.pdf`; `.docx` needs `pandoc`, `python-docx`, or `unzip` on `PATH`. `/create-pptx` requires `python3` with `python-pptx` installed (`pip install python-pptx`).
 - **Timesheet** — `git`, `find`, `stat` on `PATH`; a `.claude/timesheet.config.json` you create listing your repos, authors, and display names.
 

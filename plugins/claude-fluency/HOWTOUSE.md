@@ -121,6 +121,20 @@ auto-assignment of the "Assigned" status...
 
 Follow-ups work conversationally: *"regenerate Tuesday, mention the migration script"*, *"make it terser"*, *"extend to Friday"*.
 
+### `/pr-setup`
+
+Run once per repo before `/pr-review` or `pr-comments`. Detects whether your repo is on GitHub, GitLab, or Azure DevOps from `git remote -v`, checks whether you're already authenticated, and if not, tells you the exact command to run — never a vague "set up credentials first."
+
+```text
+/pr-setup
+```
+
+```
+Detected: GitHub (origin → github.com/acme/widgets)
+Not ready — gh CLI not authenticated, GH_TOKEN not set.
+Run: gh auth login
+```
+
 ---
 
 ## Skills
@@ -145,7 +159,7 @@ Outputs `GRAPH_REPORT.md` (node/edge counts, communities, hub nodes), an interac
 
 ### `pr-review`
 
-End-to-end PR review: layered walkthrough (grouped by "data model," "API surface," "UI," "tests" — not diff order), a health scorecard (test coverage / scope discipline / risk), and severity-graded findings each paired with an agent-ready fix prompt.
+End-to-end PR review: layered walkthrough (grouped by "data model," "API surface," "UI," "tests" — not diff order), a health scorecard (test coverage / scope discipline / risk), and severity-graded findings each paired with an agent-ready fix prompt. Supports GitHub, GitLab, and Azure DevOps out of the box — run `/pr-setup` first if you haven't confirmed credentials are in place.
 
 ```text
 Review PR #482
@@ -157,7 +171,7 @@ Shows everything in chat first — nothing is posted to the PR until you explici
 
 ### `pr-comments`
 
-Fetches and groups every comment thread on a PR (inline by file/line, PR-level separately), filters out bot/system noise, and surfaces unresolved threads first.
+Fetches and groups every comment thread on a PR (inline by file/line, PR-level separately), filters out bot/system noise, and surfaces unresolved threads first. Same GitHub/GitLab/Azure DevOps coverage as `pr-review`.
 
 ```text
 Show me the comments on PR #482
@@ -208,6 +222,7 @@ Not called directly — `/security-scan` dispatches all 11 in parallel. Listed h
 | Build a slide deck | `/create-pptx <file> [--template <file>]` |
 | Record an architecture decision | `/adr <title>` |
 | Map a codebase visually | `/graphify <path>` |
+| Check PR credentials for this repo | `/pr-setup` |
 | Review a PR end-to-end | "Review PR #<id>" (pr-review skill) |
 | Read PR discussion threads | "Show comments on PR #<id>" (pr-comments skill) |
 | Generate today's timesheet line | `/timesheet` |

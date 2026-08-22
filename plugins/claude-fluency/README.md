@@ -39,8 +39,9 @@ See [`HOWTOUSE.md`](HOWTOUSE.md) for a runnable example of every command, skill,
 ### Devops / knowledge graph
 
 - **Skill: `graphify`** — defines the interface and expected output (`GRAPH_REPORT.md`, an HTML visualization, a JSON export) for turning a codebase into a knowledge graph with community detection. **The actual graph-building engine is not included** — plug in your own AST/static-analysis tooling or graph library.
-- **Skill: `pr-review`** — end-to-end PR review: layered walkthrough, health score, severity-graded findings with fix prompts. Shows results in chat first; posts nothing until confirmed.
-- **Skill: `pr-comments`** — fetches and groups PR comment threads (inline by file/line, PR-level separately), filtering system noise.
+- **Command: `/pr-setup`** — detects your repo's Git host (GitHub, GitLab, Azure DevOps) from `git remote -v` and checks whether the credentials `pr-review`/`pr-comments` need are already in place, telling you the exact command to run if not. Run once per repo before the two skills below.
+- **Skill: `pr-review`** — end-to-end PR review: layered walkthrough, health score, severity-graded findings with fix prompts. Shows results in chat first; posts nothing until confirmed. Covers GitHub, GitLab, and Azure DevOps.
+- **Skill: `pr-comments`** — fetches and groups PR comment threads (inline by file/line, PR-level separately), filtering system noise. Same platform coverage as `pr-review`.
 
 ### Document generation
 
@@ -56,7 +57,7 @@ See [`HOWTOUSE.md`](HOWTOUSE.md) for a runnable example of every command, skill,
 
 - **Engineering workflow hooks** — `jq` on `PATH` (safety hook falls back to regex if absent); `bash` (POSIX-ish, not `sh`); for notifications, `notify-send` (Linux), AppleScript/`osascript` (macOS, built in), or `powershell.exe` reachable from WSL/Git Bash (Windows). The force-push block requires a literal `--yes-i-mean-it` flag as a deliberate friction point — adjust the sentinel in `scripts/pre-tool-safety.sh` if needed. The `rm -rf` check allowlists common temp/build dirs (`/tmp`, `node_modules`, `dist`, `build`, `.cache`, `__pycache__`, `.next`, `venv`, `.venv`).
 - **`/security-scan`** — none of the external scanning tools are bundled; each agent runs whichever of its tools are on `PATH` and states a coverage gap if one is missing. For full coverage install: `bandit`, `semgrep` (SAST); `pip-audit`, `safety` (Python deps), `npm`/`yarn`/`pnpm audit` (Node deps); `trufflehog`, `gitleaks`, `detect-secrets` (secrets); `checkov` (IaC/container); `sslyze` (live TLS checks).
-- **`pr-review` / `pr-comments`** — written generically but include an Azure DevOps section with actual REST/CLI calls. Requires an Azure DevOps PAT (`Code (Read)` for comments, `Code (Read & Write)` for posting) or authenticated `az devops` CLI — not included. On another platform (GitHub/GitLab/Bitbucket), swap the Azure DevOps section for the equivalent API calls.
+- **`pr-review` / `pr-comments`** — cover GitHub, GitLab, and Azure DevOps, each with its own tested REST/CLI section in the skill files. None of the credentials are included — run `/pr-setup` to check what's already configured and get the exact command for what's missing (`gh auth login`, `glab auth login`, or an Azure DevOps PAT + `az devops configure`). Bitbucket and other hosts have no tested recipe yet.
 - **`graphify`** — no dependency by itself, but produces nothing until connected to a real graph-building implementation.
 - **`/mom`** — `.txt`/`.pdf` need no setup; `.docx` needs `pandoc` (preferred), `python-docx`, or `unzip` on `PATH`.
 - **`/create-pptx`** — requires `python3` with `python-pptx` (`pip install python-pptx`). `.docx` uses the same extraction chain as `/mom`.
@@ -86,6 +87,8 @@ Requires `git`, `find`, and `stat` on `PATH` — no other tooling.
 /learn
 
 /security-scan
+
+/pr-setup
 
 /mom transcripts/2026-08-10-standup.txt
 /create-pptx notes/kickoff.pdf --template branding/header-footer-template.pptx

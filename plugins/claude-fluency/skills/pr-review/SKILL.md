@@ -29,3 +29,33 @@ The steps above are platform-agnostic. This section covers the Azure DevOps-spec
 **Posting a status or comment (only after confirmation):**
 - REST: `POST` to `.../pullrequests/<id>/threads?api-version=7.1` for a new comment thread, or `PATCH .../pullrequests/<id>?api-version=7.1` to update PR status/labels.
 - Always confirm the target `repositoryId` and `pullRequestId` resolved correctly before posting — posting to the wrong PR because of a mis-parsed URL is a much worse failure than not posting at all.
+
+## GitHub
+
+**Prerequisites:** the `gh` CLI, authenticated (`gh auth login`), or a token with `repo` scope in `GH_TOKEN`/`GITHUB_TOKEN`. Neither is included with this plugin. Run `/pr-setup` first if unsure whether either is in place.
+
+**Fetching a PR:**
+- CLI (preferred — handles auth and pagination for you): `gh pr view <number> --json title,body,files,additions,deletions,commits` for metadata, `gh pr diff <number>` for the diff.
+- REST (if `gh` isn't available): `GET https://api.github.com/repos/<owner>/<repo>/pulls/<number>` for metadata, `.../pulls/<number>/files` for the changed-file list, with header `Accept: application/vnd.github.v3.diff` on the PR URL itself to get a raw diff.
+
+**Posting a review or comment (only after confirmation):**
+- CLI: `gh pr review <number> --comment --body "..."` for a general PR comment, `gh pr review <number> --approve|--request-changes --body "..."` for a formal review.
+- REST: `POST /repos/<owner>/<repo>/pulls/<number>/reviews` with a `body` and `event` (`COMMENT`/`APPROVE`/`REQUEST_CHANGES`), or `POST /repos/<owner>/<repo>/issues/<number>/comments` for a plain top-level comment.
+- Confirm `owner`/`repo`/`number` resolved correctly from the PR URL or the current repo's `origin` remote before posting.
+
+## GitLab
+
+**Prerequisites:** the `glab` CLI, authenticated (`glab auth login`), or a personal access token with `api` scope in `GITLAB_TOKEN`. Neither is included with this plugin. Self-hosted GitLab: also need the instance host, not just `gitlab.com`.
+
+**Fetching a PR (GitLab calls it a merge request):**
+- CLI: `glab mr view <id>` for metadata, `glab mr diff <id>` for the diff.
+- REST: `GET https://<host>/api/v4/projects/<project_id>/merge_requests/<iid>` for metadata, `.../merge_requests/<iid>/changes` for the diff, `.../merge_requests/<iid>/discussions` for existing threads. `<project_id>` accepts a URL-encoded `namespace/project` path in place of the numeric ID.
+
+**Posting a note (only after confirmation):**
+- CLI: `glab mr note <id> --message "..."`.
+- REST: `POST .../merge_requests/<iid>/notes` with a `body`.
+- Confirm the resolved `project_id`/`iid` before posting — same reasoning as Azure DevOps and GitHub above.
+
+## Other platforms (Bitbucket, self-hosted Gitea/Gerrit, etc.)
+
+Not wired up in this skill yet — no tested recipe exists for them here. If you're on one of these, either ask Claude to adapt the GitHub/GitLab REST pattern to that platform's API (works reasonably well, since the shape is similar — fetch diff, fetch threads, post comment — but treat the result as unverified until you've checked it against a real PR), or open an issue/PR against this plugin to add a proper section once it's been tested.
