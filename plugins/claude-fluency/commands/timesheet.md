@@ -1,10 +1,6 @@
 ---
-name: timesheet
-description: >
-  Generates daily timesheet entries from git history and file modification timestamps
-  across one or more configured repos. Output matches timesheet comment format
-  (Day, DD Mon • 8:00 hrs + paragraph). Trigger: /timesheet
-trigger: /timesheet
+description: Generate daily timesheet entries from git history and file-modification timestamps across configured repos.
+argument-hint: "[last week | YYYY-MM-DD [YYYY-MM-DD]]"
 ---
 
 # /timesheet
@@ -12,7 +8,7 @@ trigger: /timesheet
 Generates timesheet entries by scanning git commits and file modification timestamps
 across every repo listed in your config. Output is ready to paste into your timesheet tool.
 
-**Config required before first use.** This skill reads repo paths, author names, and
+**Config required before first use.** This command reads repo paths, author names, and
 display names from a config file — nothing about your repos or identity is hardcoded.
 See [Config](#config) below.
 
@@ -61,7 +57,7 @@ against a fixed count.
 
 ### Phase 1 — Parse Date Range
 
-**1.1 Parse args from user message**
+**1.1 Parse args from `$ARGUMENTS`**
 
 Supported forms:
 - No args → current week: Monday of the current ISO week through today

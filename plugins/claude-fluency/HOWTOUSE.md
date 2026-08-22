@@ -101,6 +101,26 @@ Drafts a Nygard-style Architecture Decision Record from the current conversation
 
 Writes `docs/adr/0007-use-azure-sql-serverless-instead-of-snowflake-for-oltp.md` (Status, Context, Decision Drivers, Decision, Alternatives Considered, Consequences, Notes). Only fires for decisions with real architectural weight — skips routine implementation details, and marks unstated figures **TBD** rather than fabricating them.
 
+### `/timesheet [last week | YYYY-MM-DD [YYYY-MM-DD]]`
+
+Generates daily timesheet entries from git history + file-modification timestamps across the repos listed in `.claude/timesheet.config.json` (see [README](README.md#prerequisites) for the config shape).
+
+```text
+/timesheet                        # current week, Mon → today
+/timesheet last week              # Mon–Fri of previous week
+/timesheet 2026-05-18 2026-05-22  # explicit start/end
+/timesheet 2026-05-22             # single day
+```
+
+Output, one entry per active day:
+```
+Mon, 18 May  •  8:00 hrs
+Refactored lead status logic in LeadDetail to remove redundant
+auto-assignment of the "Assigned" status...
+```
+
+Follow-ups work conversationally: *"regenerate Tuesday, mention the migration script"*, *"make it terser"*, *"extend to Friday"*.
+
 ---
 
 ## Skills
@@ -144,26 +164,6 @@ Show me the comments on PR #482
 ```
 
 Pairs naturally with `pr-review` — fetch the discussion, then review the code.
-
-### `timesheet`
-
-Generates daily timesheet entries from git history + file-modification timestamps across the repos listed in `.claude/timesheet.config.json` (see [README](README.md#prerequisites) for the config shape).
-
-```text
-/timesheet                        # current week, Mon → today
-/timesheet last week              # Mon–Fri of previous week
-/timesheet 2026-05-18 2026-05-22  # explicit start/end
-/timesheet 2026-05-22             # single day
-```
-
-Output, one entry per active day:
-```
-Mon, 18 May  •  8:00 hrs
-Refactored lead status logic in LeadDetail to remove redundant
-auto-assignment of the "Assigned" status...
-```
-
-Follow-ups work conversationally: *"regenerate Tuesday, mention the migration script"*, *"make it terser"*, *"extend to Friday"*.
 
 ---
 

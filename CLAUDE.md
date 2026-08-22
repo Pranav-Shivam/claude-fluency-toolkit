@@ -19,48 +19,19 @@ README.md                                repo landing page (GitHub only, does no
 
 **Directory contract**: `commands/`, `skills/`, `agents/`, `hooks/` must sit at the plugin root (next to `.claude-plugin/`), never inside it. The loader auto-discovers by folder name and location — no manifest entry needed per command/skill/agent. **Editing `marketplace.json` or `plugin.json` is only required for a new plugin entry or a version bump** — never for adding a command/skill/agent to the existing tree.
 
-## Adding a new security agent
+## Subsystem contracts live in `.claude/rules/`, not here
 
-Fixed contract, not a suggestion — copy an existing agent (`auth-agent.md` is a clean template):
+Adding a security agent, a command, a skill, or touching a hook script each has a real contract — but those contracts only matter to a session actually editing those files, so they're path-scoped rules instead of standing rules everyone pays for:
 
-```yaml
-name: <x>-agent
-tools: [Bash, Read, Grep, Glob]
-model: sonnet
-permissionMode: plan
-```
+- `.claude/rules/security-agents.md` — agent frontmatter shape, checklist pairing, report schema, `security-scan` wiring, the intentional-overlap carve-out against `engineering-principles`.
+- `.claude/rules/commands-and-skills.md` — command frontmatter fields, `$ARGUMENTS` handling, the skill/command boundary.
+- `.claude/rules/hooks.md` — hook stdin/exit-code protocol, performance rules, `SessionStart` output budget.
 
-Required body parts, in order:
-1. One-sentence role statement.
-2. "Before starting, read `references/<name>-agent-checklist.md`" — and create that checklist file (8–15 terse bullets, `# <Domain> checklist` heading). No agent ships without its matching reference.
-3. A "Stay in your lane" paragraph naming which other agents own adjacent findings. This is what stops the orchestrator from silently dropping overlap as a duplicate — skip it and your findings get eaten.
-4. Closing report schema, copied verbatim: `{file, line, severity, issue, recommendation}`. (`lint-agent` is the one intentional exception: `{file, line, category, note}` — it flags style, not vulnerabilities.)
-5. **Wire the new agent into `commands/security-scan.md`.** Dropping a file into `agents/` does not get it fanned out — the orchestrator's agent list is hardcoded there.
-
-<!--
-RATIONALE: security fleet overlap is intentional, engineering-principles' "no duplication" rule is not.
-sast-agent and database-agent both flag injection; crypto-tls/auth/secrets all touch JWT/key handling.
-That's cross-checking by design (see each agent's "stay in your lane" paragraph), not the kind of
-duplication engineering-principles tells you to cut. If you're trimming "redundant" agents to satisfy
-that skill, you're applying it to the wrong layer — the skill governs application code, not the
-audit fleet's deliberate redundancy.
--->
-
-## Adding a command or skill
-
-Commands (`commands/<name>.md`): frontmatter needs `description`; add `argument-hint` if it takes args, `model` only to override the default (e.g. `git-commit.md` pins `haiku` — it's cheap and mechanical), `disable-model-invocation: true` only if the command must never auto-fire (currently just `/git-commit`). Any command that parses `$ARGUMENTS` must stop and ask if it's empty — never guess or invent a value. See `adr.md`/`mom.md`/`create-pptx.md` for the pattern.
-
-Skills (`skills/<name>/SKILL.md`): frontmatter is just `name` + `description` unless the skill is slash-invoked, in which case add `trigger: /<name>` (only `timesheet` does this today — it's a one-off exception, not a pattern to copy onto the other four skills, which load by context/natural language).
-
-`references/` is a security-fleet-only convention. Commands and skills keep everything inline in their own file; don't split them out just because the agents do.
-
-## Hooks
-
-Any change to `hooks/hooks.json` or `scripts/*.sh` needs a careful read, not a quick edit — `PreToolUse` fires on every Bash call, so slow or wrong logic there taxes (or breaks) every command in the session. Protocol, undocumented anywhere but the script itself: hook JSON payload arrives on **stdin**, `jq` parses it with a regex fallback if `jq` is missing, exit code `2` blocks with a message on stderr, exit `0` passes. Prefer shell + `jq` over spawning another interpreter — same performance reasoning.
+These load automatically when Claude touches a matching path. If you're editing this repo and one of those areas feels underspecified, check there before guessing.
 
 ## Versioning
 
-`plugin.json`'s `version` is the only version number in the repo. Clients skip an update when that string doesn't change, so **bump it on every user-facing change** — new command, new agent, changed behavior. This has not been enforced historically (the five-plugins-into-one merge and the `/adr`+`/review-diff` addition both landed without a version bump); treat that as the past, not the convention to continue.
+`plugin.json`'s `version` is the only version number in the repo. Clients skip an update when that string doesn't change, so **bump it on every user-facing change** — new command, new agent, changed behavior — and add an entry to `plugins/claude-fluency/CHANGELOG.md` in the same commit. This has not been enforced historically (the five-plugins-into-one merge and the `/adr`+`/review-diff` addition both landed without a version bump); treat that as the past, not the convention to continue.
 
 Before committing a structural change, sanity-check it locally:
 ```

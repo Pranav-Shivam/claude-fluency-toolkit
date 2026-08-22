@@ -50,7 +50,7 @@ See [`HOWTOUSE.md`](HOWTOUSE.md) for a runnable example of every command, skill,
 
 ### Timesheet
 
-- **Skill: `timesheet`** — scans every repo in your config for the requested date range, filters out inactive days, and synthesizes each remaining day into a `Day, DD Mon  •  8:00 hrs` entry plus a 3–6 sentence paragraph.
+- **Command: `/timesheet [last week | YYYY-MM-DD [YYYY-MM-DD]]`** — scans every repo in your config for the requested date range, filters out inactive days, and synthesizes each remaining day into a `Day, DD Mon  •  8:00 hrs` entry plus a 3–6 sentence paragraph.
 
 ## Setup prerequisites
 
