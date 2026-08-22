@@ -2,6 +2,8 @@
 
 One plugin, five toolkits: engineering principles + safety hooks, a security audit fleet, devops/knowledge-graph skills, document generation, and timesheet generation.
 
+See [`HOWTOUSE.md`](HOWTOUSE.md) for a runnable example of every command, skill, and agent listed below.
+
 ## What's inside
 
 ### Engineering workflow
