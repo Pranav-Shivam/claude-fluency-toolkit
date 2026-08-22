@@ -62,12 +62,16 @@ claude-fluency-toolkit/
 ├── .claude-plugin/marketplace.json
 └── plugins/
     └── claude-fluency/
+        ├── .claude-plugin/plugin.json
         ├── commands/
         ├── skills/
         ├── agents/
+        ├── references/
         ├── hooks/
         ├── scripts/
-        └── references/
+        ├── README.md
+        ├── HOWTOUSE.md
+        └── CHANGELOG.md
 ```
 
 ## License
