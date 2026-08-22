@@ -2,6 +2,11 @@
 
 Tracks `version` in `.claude-plugin/plugin.json`. Bump it and add an entry here in the same commit as any user-facing change — see root `CLAUDE.md`.
 
+## 0.5.0 — 2026-08-22
+
+- Replace `engineering-principles`' condensed content with the full canonical framework (6 failure modes, per-section "Rule"/"Test" lines, Signal Check).
+- Fix a real gap: the skill was documented as "loaded automatically" but Skills only load when Claude judges them contextually relevant — never guaranteed. The 5 core rules are now inlined directly into the `SessionStart` hook so every session gets them unconditionally, regardless of whether the skill itself gets invoked.
+
 ## 0.4.0 — 2026-08-22
 
 - `pr-review` and `pr-comments` now cover GitHub and GitLab, not just Azure DevOps — each with its own tested REST/CLI section (`gh`/`GH_TOKEN`, `glab`/`GITLAB_TOKEN`).

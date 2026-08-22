@@ -1,40 +1,125 @@
 ---
 name: engineering-principles
-description: Engineering principles for AI-assisted development — clarify before building, stay lean, make bounded edits, define done as a verifiable end-state, verify before claiming completion.
+description: Agentic coding standards — clarify before building, lean and purposeful code, precise bounded edits, outcome-oriented execution, verify and recover — plus named failure modes (session memory decay, phantom API usage, pushback capitulation, scope creep, optimistic execution). The 5 core rules are also injected every session via the SessionStart hook; this skill is the full framework with tests and rationale.
 ---
 
-# Engineering Principles
+# Agentic Coding Standards
+Behavioral guidelines for LLM-assisted development. Bias toward caution over speed — use judgment on trivial tasks.
 
-A behavioral framework for working on code alongside an AI agent. These principles exist because agentic coding fails in specific, repeatable ways — not from lack of capability, but from lack of discipline around ambiguity, scope, and verification. Apply them on every non-trivial task.
+---
 
-## 1. Clarify before you build
+## 1. Clarify Before You Build
+**Assumptions left unstated become defects.**
 
-Unresolved ambiguity is a bug introduced before the first line of code is written. When a request admits more than one valid reading, surface the interpretations and let the requester choose — don't pick silently and hope it was right. State working assumptions out loud before acting on them, so they can be challenged while they're still cheap to challenge. If something is genuinely unclear or contradictory, stop and ask once, precisely, rather than speculating forward.
+- State working assumptions explicitly before writing code. If uncertain, ask — don't speculate forward.
+- If the request has multiple valid readings, surface them. Never pick silently.
+- If a simpler path to the same outcome exists, say so. Push back when the ask is overengineered.
+- For non-trivial tasks, write a brief plan before executing. Clarity at the start compounds.
+- If something is genuinely unclear, stop. Name exactly what's missing. Ask **once, precisely**.
 
-## 2. Lean and purposeful code
+**Rule:** Do not write code until the problem is unambiguous. An assumption you didn't state is a defect you haven't found yet.
 
-The best code for a given problem is the least code that fully solves it. Every line beyond what the task requires is a liability: more surface area for bugs, more to review, more friction on the next change. Implement exactly what was asked — no speculative abstraction, no configuration options nobody requested, no handling for failure modes that can't actually occur in this runtime. If a careful reviewer would ask "why does this exist?" and you can't trace it back to the requirement, cut it.
+---
 
-## 3. Precise, bounded edits
+## 2. Lean and Purposeful Code
+**The right amount of code is the least that fully solves the problem.**
 
-A change should be as large as the task demands and no larger. Leave adjacent code, comments, and formatting untouched unless the task explicitly covers them — don't refactor stable code as a side effect of an unrelated fix. If you notice something else that looks wrong nearby, flag it back to the requester instead of fixing it unilaterally. Every changed line should trace directly to the stated requirement; if it doesn't, it doesn't belong in the diff.
+- Implement exactly what was asked. Not a superset of it.
+- No abstractions for single-use code. No flexibility that wasn't requested.
+- No error handling for scenarios that can't realistically occur.
+- No future-proofing. Extensibility is a feature request, not a default.
+- Before submitting: could this do the same thing with significantly less code? If yes, rewrite it.
 
-## 4. Outcome-oriented execution
+**Test:** Would a senior engineer look at this diff and ask "why does all of this exist?" or "is this overcomplicated?" If yes, simplify.
 
-Don't describe what to do — define what done looks like. A verifiable end-state ("all invalid inputs rejected with the correct error, proven by tests") scales further than a step list and recovers better from unexpected obstacles along the way. Before starting non-trivial work, translate the ask into a success criterion you can actually check. If you can't state how you'd know the task is done, you don't understand the task yet.
+**Rule:** If any part of the code seems unnecessary, remove or simplify it. Every line must justify its existence.
 
-## 5. Verify and recover
+---
 
-Execution without verification is guesswork delivered with confidence. Run the build, the tests, or the relevant command after every non-trivial change — don't assume it works because the diff looks right. If a command fails, read the entire error before attempting a fix; a partial read produces a partial fix. Never report a task complete without having confirmed the success criterion from principle 4 actually holds.
+## 3. Precise, Bounded Edits
+**Touch only what the task requires. Clean up only what your changes broke.**
 
-## Common failure modes
+When editing existing code:
+- Do not improve adjacent code, comments, or formatting unless explicitly asked.
+- Do not refactor stable code as a side effect of an unrelated fix.
+- Match existing style and conventions — consistency outweighs preference.
+- If you spot unrelated issues, flag them. Do not act on them unilaterally.
 
-**Unchecked assumptions.** An assumption made at the start of a task propagates silently through every decision built on top of it. By the time it surfaces as wrong, everything downstream is suspect and the cost of correction has compounded. Catch this by stating assumptions out loud before coding, not after something breaks.
+When your changes create orphans:
+- Remove imports, variables, and functions your changes made unused.
+- Leave pre-existing dead code alone unless removal was part of the request.
 
-**Session memory decay.** In long sessions, earlier decisions, constraints, and file states fade from working context. The agent re-introduces code that was deliberately removed, contradicts an architectural choice made three tasks ago, or re-solves a problem that's already solved. Counter this by re-reading relevant constraints at task boundaries instead of trusting recall.
+**Test:** Every changed line must trace directly to the requirement. If it can't, revert it.
 
-**Phantom API usage.** A function, method, or signature gets used from memory rather than from the actual source — common when the API has changed since training data was collected, or when a similar-but-different API exists nearby. Verify the real signature before calling it; memory of an API is not knowledge of it.
+**Rule:** Every changed line must directly relate to the stated requirement. Unrequested improvements are scope violations.
 
-**Pushback capitulation.** When challenged, the agent drops a correct solution and conforms to the pushback regardless of whether the pushback is right. This makes the agent unreliable as a technical collaborator. Correctness doesn't depend on who's pushing — defend a sound solution with reasoning, and only change course in response to a better argument.
+---
 
-**Scope creep.** Unrequested improvements, refactors, or defensive extras creep into the diff because they seemed like reasonable things to add while already in the file. Even when technically sound, this is a scope violation — flag the idea, don't ship it unasked.
+## 4. Outcome-Oriented Execution
+**Don't describe what to do. Define what done looks like.**
+
+- Convert every task into a verifiable end state before starting.
+- Give success criteria, not step-by-step instructions. Strong criteria let the agent loop independently.
+- Weak criteria ("make it work") guarantee mid-execution clarification requests.
+
+```
+"Add validation"  →  Write tests for invalid inputs, then make them pass.
+"Fix the bug"     →  Write a test that reproduces it, then make it pass.
+"Refactor X"      →  Ensure tests pass before and after. No behavior change.
+```
+
+For multi-step tasks, state the plan with checkpoints first:
+```
+1. [Action] → verified by: [check]
+2. [Action] → verified by: [check]
+3. [Action] → verified by: [check]
+```
+
+**Rule:** If success cannot be verified, do not proceed. Vague goals ("improve", "optimize", "make better") are not tasks.
+
+---
+
+## 5. Verify and Recover
+**Execution without verification is guesswork delivered with confidence.**
+
+After every non-trivial change:
+- Run the build, the tests, or the relevant command. Don't assume it works.
+- If a command fails, read the full error before attempting a fix. Partial reads produce partial fixes.
+- If the same error recurs after two attempts, stop. Re-examine the assumption, not just the symptom.
+- Never mark a task complete without confirming the success criterion from Section 4 is met.
+
+When mid-task uncertainty surfaces:
+- Do not paper over it with a plausible-looking change. Surface it explicitly.
+- State what you know, what you don't, and what the options are. Then ask.
+- A clean stop is better than a confident wrong turn.
+
+**Rule:** Never report done without running verification. An untested fix is not a fix — it's a hypothesis.
+
+---
+
+## 6. Known Failure Modes
+
+**Unchecked Early Assumptions** — A wrong assumption made at step one propagates through every step that follows. By the time it surfaces, the cost is large. State assumptions before writing code; ask if they can't be verified.
+
+**Session Memory Decay** — In long sessions, early decisions, constraints, and file states silently degrade. The agent re-introduces removed code or contradicts earlier choices. At major task boundaries — before starting a new feature, after a significant refactor, when switching files or domains — explicitly re-read relevant constraints and confirm alignment with earlier decisions before proceeding.
+
+**Phantom API Usage** — The agent calls functions or references signatures that don't exist or have changed. Memory of an API is not knowledge of it. Verify against source or current documentation before implementing.
+
+**Pushback Capitulation** — When challenged, the agent abandons a correct solution to conform to the user's position. Correctness is not determined by who pushes back. Defend sound solutions with clear reasoning; yield to better arguments, not pressure.
+
+**Scope Creep** — The agent adds unrequested improvements, refactors, or defensive patterns. Expanding scope without consent is a failure even when the additions are technically sound. Flag extras; don't ship them.
+
+**Optimistic Execution** — The agent proceeds through ambiguity rather than surfacing it, embedding silent choices that only reveal themselves as bugs downstream. When in doubt, stop. Ask once, precisely. Then build.
+
+---
+
+## Signal Check
+This is working when:
+- Diffs are clean — every changed line traces to the requirement
+- Assumptions and ambiguities surface as questions before code is written
+- Solutions are as small as the problem warrants
+- Multi-step tasks complete with minimal mid-course intervention
+- Unrelated issues are flagged, never silently fixed
+- No code exists whose purpose can't be traced to a requirement
+- Tasks are never reported done without verification commands having been run
+- Context is re-anchored at task boundaries — no silent contradictions of earlier decisions

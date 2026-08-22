@@ -8,7 +8,7 @@ See [`HOWTOUSE.md`](HOWTOUSE.md) for a runnable example of every command, skill,
 
 ### Engineering workflow
 
-- **Skill: `engineering-principles`** — five principles (clarify before building, lean code, bounded edits, outcome-oriented execution, verify and recover) plus common failure modes. Loaded automatically as context; no invocation needed.
+- **Skill: `engineering-principles`** — five principles (clarify before building, lean code, bounded edits, outcome-oriented execution, verify and recover) plus six named failure modes, each with a concrete test/rule. The 5 core rules are injected into every session unconditionally by the `SessionStart` hook (skills only load when Claude judges them relevant, which isn't a guarantee); the full framework with tests, tables, and failure-mode detail lives in this skill for on-demand loading.
 - **Command: `/git-commit`** — reads the staged diff and drafts a Conventional Commits message. Runs on Haiku, model-invocation disabled (must be explicitly called).
 - **Command: `/pr-description`** — diffs against the default branch and drafts a PR description (What changed / Why / Testing).
 - **Command: `/review-diff [base-branch]`** — reviews a diff against `engineering-principles`: scope creep, architectural consistency, silently undone reasoning, phantom APIs, bounded edits, verification, and security-adjacent risk with blast radius. Tags each finding High/Medium/Low confidence.

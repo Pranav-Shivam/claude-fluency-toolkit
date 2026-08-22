@@ -143,7 +143,7 @@ Skills load automatically when relevant, or can be invoked directly by name.
 
 ### `engineering-principles`
 
-No invocation needed — loaded as background context on any non-trivial coding task. Five principles: clarify before building, stay lean, bounded edits, outcome-oriented (define done as a verifiable end-state), verify before claiming done. `/review-diff` and code-review workflows check against it explicitly.
+The 5 core rules print at the start of every session automatically (via the `SessionStart` hook) — no invocation needed for those. This skill itself holds the full framework (tests, rationale, six named failure modes) for whenever Claude loads it on demand. `/review-diff` and code-review workflows check against it explicitly.
 
 ### `graphify`
 
