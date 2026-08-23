@@ -12,15 +12,12 @@ case "$(uname -s)" in
   Linux)
     if command -v notify-send >/dev/null 2>&1; then
       notify-send "Claude Code" "$MSG"
-    elif command -v powershell.exe >/dev/null 2>&1; then
-      # WSL without notify-send: bounce through Windows via powershell.exe.
-      powershell.exe -c "[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.MessageBox]::Show('$MSG')" 2>/dev/null || echo "$MSG"
     else
       echo "$MSG"
     fi
     ;;
   MINGW*|MSYS*|CYGWIN*)
-    powershell.exe -c "[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.MessageBox]::Show('$MSG')" 2>/dev/null || echo "$MSG"
+    echo "$MSG"
     ;;
   *)
     echo "$MSG"

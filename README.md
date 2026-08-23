@@ -41,6 +41,15 @@ Or, testing from a local clone before pushing:
 2. Run `claude` to start CLI session there.
 3. Run install commands above inside that session.
 
+## Update
+
+```text
+/plugin marketplace update claude-fluency-toolkit
+/plugin update claude-fluency@claude-fluency-toolkit
+```
+
+First pulls the latest source into the marketplace cache, second re-installs the plugin from it. Requires a Claude Code restart to take effect.
+
 ## Uninstall
 
 ```text

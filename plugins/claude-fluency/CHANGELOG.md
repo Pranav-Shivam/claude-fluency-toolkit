@@ -2,6 +2,10 @@
 
 Tracks `version` in `.claude-plugin/plugin.json`. Bump it and add an entry here in the same commit as any user-facing change — see root `CLAUDE.md`.
 
+## 0.5.1 — 2026-08-23
+
+- Fix `notify.sh` hanging the `Stop`/`TaskCompleted` hooks on Windows and WSL: it opened a blocking `System.Windows.Forms.MessageBox` that wouldn't return until the user clicked OK, stalling the session. Both Windows-facing branches now just `echo` the message instead.
+
 ## 0.5.0 — 2026-08-22
 
 - Replace `engineering-principles`' condensed content with the full canonical framework (6 failure modes, per-section "Rule"/"Test" lines, Signal Check).
