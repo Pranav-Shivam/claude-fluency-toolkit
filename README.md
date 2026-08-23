@@ -48,7 +48,13 @@ Or, testing from a local clone before pushing:
 /plugin update claude-fluency@claude-fluency-toolkit
 ```
 
-First pulls the latest source into the marketplace cache, second re-installs the plugin from it. Requires a Claude Code restart to take effect.
+Run in real CLI terminal (see troubleshooting above) — not the VSCode/JetBrains extension chat panel.
+
+`/plugin update` opens an interactive Plugin Manager instead of updating directly. It lands on the **Discover** tab. Navigate manually:
+
+1. **Marketplaces** tab — select `claude-fluency-toolkit`, trigger refresh/update. Pulls latest source from your local path (or git remote) into the marketplace cache.
+2. **Installed** tab — select `claude-fluency`, trigger its update action. Re-installs the plugin from the refreshed marketplace source.
+3. Restart Claude Code — update doesn't take effect until restart.
 
 ## Uninstall
 
