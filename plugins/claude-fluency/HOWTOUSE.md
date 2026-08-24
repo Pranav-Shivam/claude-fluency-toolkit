@@ -135,6 +135,24 @@ Not ready — gh CLI not authenticated, GH_TOKEN not set.
 Run: gh auth login
 ```
 
+### `/pr-watch-setup`
+
+Azure DevOps only. Run once per repo to get notified when new PRs open — schedules a recurring check (cron on Linux/macOS, Task Scheduler on Windows), desktop-notifies on new activity, and opens a terminal offering to run `/pr-review` for whichever PRs you approve. Nothing is baked into the plugin: org/project/repo/PAT get written to a per-repo config file on your machine during this interactive setup.
+
+```text
+/pr-watch-setup
+```
+
+Walks through: confirm org/project/repo detected from `git remote -v`, checks for existing `az devops` auth (asks for a PAT only if that fails), asks how often to check, then installs the scheduler entry and runs one check immediately so you see it work.
+
+### `/pr-watch-disable`
+
+```text
+/pr-watch-disable
+```
+
+Removes the scheduler entry for the current repo, and optionally its config file.
+
 ---
 
 ## Skills

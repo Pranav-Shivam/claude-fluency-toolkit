@@ -2,6 +2,12 @@
 
 Tracks `version` in `.claude-plugin/plugin.json`. Bump it and add an entry here in the same commit as any user-facing change — see root `CLAUDE.md`.
 
+## 0.6.0 — 2026-08-24
+
+- Add `/pr-watch-setup` — schedules a recurring check (cron on Linux/macOS, Task Scheduler on Windows) for new active PRs on an Azure DevOps repo, desktop-notifies, and opens an interactive terminal offering to run `/pr-review` for whichever PRs the user approves. Nothing is baked into the plugin — org/project/repo/PAT are written to a per-repo, per-machine config file (`~/.claude/claude-fluency/pr-watch/<repo-slug>.env`) generated interactively during setup.
+- Add `/pr-watch-disable` — removes the scheduler entry for a repo and optionally its config.
+- `SessionStart` now nudges with `/pr-watch-setup` when the current repo has no PR-watch config yet.
+
 ## 0.5.1 — 2026-08-23
 
 - Fix `notify.sh` hanging the `Stop`/`TaskCompleted` hooks on Windows and WSL: it opened a blocking `System.Windows.Forms.MessageBox` that wouldn't return until the user clicked OK, stalling the session. Both Windows-facing branches now just `echo` the message instead.

@@ -24,4 +24,9 @@ echo "3. Bounded edits: every changed line traces to the stated requirement."
 echo "4. Outcome-oriented: define a verifiable end-state before starting non-trivial work."
 echo "5. Verify before done: run the build/tests — an unverified fix is a hypothesis, not a fix."
 echo "Full framework + failure modes (session memory decay, phantom APIs, pushback capitulation...): Skill 'engineering-principles'."
-echo "[CLAUDE-FLUENCY] Commands: /git-commit /pr-description /review-diff /learn /security-scan /pr-setup /mom /create-pptx /adr /timesheet — see HOWTOUSE.md for examples."
+echo "[CLAUDE-FLUENCY] Commands: /git-commit /pr-description /review-diff /learn /security-scan /pr-setup /pr-watch-setup /pr-watch-disable /mom /create-pptx /adr /timesheet — see HOWTOUSE.md for examples."
+
+REPO_SLUG="$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9' '-')"
+if [ -n "$REPO_SLUG" ] && [ ! -f "$HOME/.claude/claude-fluency/pr-watch/${REPO_SLUG}.env" ]; then
+  echo "[CLAUDE-FLUENCY] No PR watch configured for this repo — run /pr-watch-setup to get notified of new PRs automatically."
+fi

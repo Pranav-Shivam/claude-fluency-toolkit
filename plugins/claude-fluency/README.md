@@ -42,6 +42,8 @@ See [`HOWTOUSE.md`](HOWTOUSE.md) for a runnable example of every command, skill,
 - **Command: `/pr-setup`** — detects your repo's Git host (GitHub, GitLab, Azure DevOps) from `git remote -v` and checks whether the credentials `pr-review`/`pr-comments` need are already in place, telling you the exact command to run if not. Run once per repo before the two skills below.
 - **Skill: `pr-review`** — end-to-end PR review: layered walkthrough, health score, severity-graded findings with fix prompts. Shows results in chat first; posts nothing until confirmed. Covers GitHub, GitLab, and Azure DevOps.
 - **Skill: `pr-comments`** — fetches and groups PR comment threads (inline by file/line, PR-level separately), filtering system noise. Same platform coverage as `pr-review`.
+- **Command: `/pr-watch-setup`** — Azure DevOps only. Schedules a recurring check (cron on Linux/macOS, Task Scheduler on Windows) for new active PRs on the current repo, desktop-notifies, and opens an interactive terminal offering to run `/pr-review` for whichever PRs you approve. Everything (org/project/repo/PAT) is written to a per-repo, per-machine config file — nothing is baked into the plugin.
+- **Command: `/pr-watch-disable`** — removes the scheduler entry (and optionally the config) for the current repo.
 
 ### Document generation
 
@@ -58,6 +60,7 @@ See [`HOWTOUSE.md`](HOWTOUSE.md) for a runnable example of every command, skill,
 - **Engineering workflow hooks** — `jq` on `PATH` (safety hook falls back to regex if absent); `bash` (POSIX-ish, not `sh`); for notifications, `notify-send` (Linux), AppleScript/`osascript` (macOS, built in), or `powershell.exe` reachable from WSL/Git Bash (Windows). The force-push block requires a literal `--yes-i-mean-it` flag as a deliberate friction point — adjust the sentinel in `scripts/pre-tool-safety.sh` if needed. The `rm -rf` check allowlists common temp/build dirs (`/tmp`, `node_modules`, `dist`, `build`, `.cache`, `__pycache__`, `.next`, `venv`, `.venv`).
 - **`/security-scan`** — none of the external scanning tools are bundled; each agent runs whichever of its tools are on `PATH` and states a coverage gap if one is missing. For full coverage install: `bandit`, `semgrep` (SAST); `pip-audit`, `safety` (Python deps), `npm`/`yarn`/`pnpm audit` (Node deps); `trufflehog`, `gitleaks`, `detect-secrets` (secrets); `checkov` (IaC/container); `sslyze` (live TLS checks).
 - **`pr-review` / `pr-comments`** — cover GitHub, GitLab, and Azure DevOps, each with its own tested REST/CLI section in the skill files. None of the credentials are included — run `/pr-setup` to check what's already configured and get the exact command for what's missing (`gh auth login`, `glab auth login`, or an Azure DevOps PAT + `az devops configure`). Bitbucket and other hosts have no tested recipe yet.
+- **`/pr-watch-setup`** — needs `az` CLI on `PATH` and either an existing `az devops` login or a PAT you provide during setup (`Code (Read & Write)` scope). Linux/macOS use system `cron` (must be running — `systemctl is-active cron` / `launchd` is always on for macOS) and, for the terminal it opens, one of `gnome-terminal`/`x-terminal-emulator`/`xterm` (Linux) or Terminal.app/iTerm2 (macOS). Windows uses `schtasks` and opens a new `powershell` window — less battle-tested than the Linux/macOS path.
 - **`graphify`** — no dependency by itself, but produces nothing until connected to a real graph-building implementation.
 - **`/mom`** — `.txt`/`.pdf` need no setup; `.docx` needs `pandoc` (preferred), `python-docx`, or `unzip` on `PATH`.
 - **`/create-pptx`** — requires `python3` with `python-pptx` (`pip install python-pptx`). `.docx` uses the same extraction chain as `/mom`.
@@ -89,6 +92,8 @@ Requires `git`, `find`, and `stat` on `PATH` — no other tooling.
 /security-scan
 
 /pr-setup
+/pr-watch-setup
+/pr-watch-disable
 
 /mom transcripts/2026-08-10-standup.txt
 /create-pptx notes/kickoff.pdf --template branding/header-footer-template.pptx
