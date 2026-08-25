@@ -145,6 +145,8 @@ Azure DevOps only. Run once per repo to get notified when new PRs open — sched
 
 Walks through: confirm org/project/repo detected from `git remote -v`, checks for existing `az devops` auth (asks for a PAT only if that fails), asks how often to check, then installs the scheduler entry and runs one check immediately so you see it work.
 
+Full step-by-step with dummy values for every prompt: [docs/pr-watch-setup-guide.md](../../docs/pr-watch-setup-guide.md).
+
 ### `/pr-watch-disable`
 
 ```text
