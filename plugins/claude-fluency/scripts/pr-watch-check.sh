@@ -66,6 +66,7 @@ LAUNCHER="$(mktemp /tmp/pr-watch-launcher.XXXXXX.sh)"
 cat > "$LAUNCHER" <<EOF
 #!/usr/bin/env bash
 [ -f "\$HOME/.bashrc" ] && source "\$HOME/.bashrc" 2>/dev/null || true
+export PATH="\$HOME/.local/bin:\$PATH"
 cd "${REPO_ROOT}"
 CLAUDE_BIN="\$(command -v claude 2>/dev/null || echo claude)"
 "\${CLAUDE_BIN}" "$(printf '%s' "$PROMPT" | sed 's/"/\\"/g')"
