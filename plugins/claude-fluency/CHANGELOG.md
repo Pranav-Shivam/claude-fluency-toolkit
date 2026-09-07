@@ -2,6 +2,11 @@
 
 Tracks `version` in `.claude-plugin/plugin.json`. Bump it and add an entry here in the same commit as any user-facing change — see root `CLAUDE.md`.
 
+## 0.7.2 — 2026-09-07
+
+- Add `pr-watch-catchup.sh` `SessionStart` hook: if the machine was asleep/off at a scheduled pr-watch fire time, the missed check now runs automatically on the next Claude Code session start instead of being silently skipped until the next scheduled slot. Staleness is `STATE_FILE` mtime vs. new `INTERVAL_HOURS` config field, self-limiting (a catch-up run resets the mtime).
+- `/pr-watch-setup` now records `INTERVAL_HOURS` in the generated config; existing configs default to 4h if the field is absent.
+
 ## 0.7.1 — 2026-08-25
 
 - Fix `pr-watch-check.sh`: the launcher terminal spawned by a PR notification failed with `claude: command not found` because it sources `.bashrc`, which early-returns for non-interactive shells before reaching the user's `PATH` export — `claude` (installed under `~/.local/bin`) was never found. Launcher now exports `~/.local/bin` onto `PATH` directly instead of relying on `.bashrc`.
