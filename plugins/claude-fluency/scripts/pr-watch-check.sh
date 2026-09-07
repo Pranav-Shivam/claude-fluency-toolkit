@@ -34,11 +34,16 @@ if [ -n "${PAT:-}" ]; then
   export AZURE_DEVOPS_EXT_PAT="$PAT"
 fi
 
+AZ_ERR="$(mktemp)"
 PR_JSON="$(az repos pr list \
   --org "$ORG" --project "$PROJECT" --repository "$REPOSITORY" \
   --status active \
   --query "[].{id:pullRequestId,title:title}" \
-  -o json 2>/dev/null || echo "[]")"
+  -o json 2>"$AZ_ERR" || echo "[]")"
+if [ -s "$AZ_ERR" ]; then
+  echo "[pr-watch] az repos pr list failed for ${REPOSITORY} ($(date '+%Y-%m-%d %H:%M:%S')): $(cat "$AZ_ERR")" >&2
+fi
+rm -f "$AZ_ERR"
 
 ACTIVE_IDS="$(echo "$PR_JSON" | python3 -c "import json,sys; print('\n'.join(str(p['id']) for p in json.load(sys.stdin)))" 2>/dev/null || true)"
 [ -z "$ACTIVE_IDS" ] && exit 0
