@@ -52,7 +52,9 @@ You'll get two questions:
 
 Example real answer given previously: *"from 8AM, every 4 hours: 8, 12, 4, 8, 12, 4, 8 so on"* → resolves to cron `0 */4 * * 1-5` (fires at 00:00, 04:00, 08:00, 12:00, 16:00, 20:00, Mon–Fri).
 
-You'll then be asked to confirm the final cron expression and reminded: **if the machine is asleep/off at a fire time, that run is skipped — not caught up. The next scheduled run just runs normally.**
+You'll then be asked to confirm the final cron expression and told: **if the machine is asleep/off at a fire time, that run is skipped — but a SessionStart hook (`pr-watch-catchup.sh`) checks staleness on every Claude Code session start and runs a catch-up check in the background if an interval was missed.**
+
+The interval you pick is also recorded as `INTERVAL_HOURS` in the config (e.g. `4`, or `24` for "every morning") — that's what the catch-up hook compares elapsed time against.
 
 ### 4. OS + plugin path resolution
 
@@ -91,6 +93,7 @@ REPOSITORY="your-repo"
 REPO_ROOT="/home/<user>/path/to/your-repo"
 STATE_FILE="/home/<user>/.claude/claude-fluency/pr-watch/your-repo.seen"
 PAT=""
+INTERVAL_HOURS="4"
 ```
 
 Every value is double-quoted, even ones that look safe — a project name with a
@@ -131,6 +134,12 @@ scheduler entry installed, and that `/pr-watch-disable` removes it later.
 - New PR found → desktop notification + opens an interactive terminal offering
   `/pr-review` for whichever PRs you approve
 - Everything logged to `<repo-slug>.log` next to the config
+- **Catch-up:** every Claude Code session start runs `pr-watch-catchup.sh`
+  (a plugin SessionStart hook). It checks each configured repo's `STATE_FILE`
+  mtime against `INTERVAL_HOURS`; if a scheduled check was missed (machine
+  asleep/off at fire time), it runs `pr-watch-check.sh` for that repo
+  immediately, in the background. Self-limiting — running it resets the
+  mtime, so it won't fire again until another full interval has passed.
 
 ## Undo
 
