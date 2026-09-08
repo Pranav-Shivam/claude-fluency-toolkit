@@ -1,6 +1,6 @@
 # claude-fluency-toolkit
 
-A Claude Code plugin marketplace with one plugin — `claude-fluency` — bundling five toolkits for AI-assisted engineering workflows.
+A Claude Code plugin marketplace with one plugin — `claude-fluency` — bundling seven toolkits for AI-assisted engineering workflows.
 
 ## What's inside
 
@@ -11,8 +11,21 @@ A Claude Code plugin marketplace with one plugin — `claude-fluency` — bundli
 | Devops / knowledge graph | A knowledge-graph interface skill (`graphify` — bring your own graph engine), PR review (`pr-review`) and PR comment (`pr-comments`) skills covering GitHub/GitLab/Azure DevOps, and `/pr-setup` to check your repo's credentials before using either.                                                                                                               |
 | Document generation      | `/mom <file>` turns a transcript into a structured Minutes of Meeting. `/create-pptx <file> [--template <file>]` turns a content file into a `.pptx` deck, reusing a template's header/footer/branding if given. `/adr` drafts an Architecture Decision Record from the current conversation/diff. All preserve source facts exactly and never invent what's missing. |
 | Timesheet                | `/timesheet` generates ready-to-paste daily timesheet entries from git history and file-modification timestamps across your configured repos. Config-driven — no hardcoded paths, authors, or names.                                                                                                                                                                       |
+| Prompt engineering       | `/prompt-master <rough idea>` turns a rough idea into one paste-ready prompt for a named target tool (Claude, GPT-5.x, Gemini, Cursor/Copilot, Midjourney/Flux/SD, Sora/Veo, etc.), or decompiles/adapts/splits an existing prompt.                                                                                                                                         |
+| Writing style             | `/humanize [text or file]` rewrites AI-sounding writing — prose, docs, email, chat, commit messages, code comments — so it reads like a person wrote it. Writing-quality only, never AI-detector evasion.                                                                                                                                                                    |
 
 See [`plugins/claude-fluency/README.md`](plugins/claude-fluency/README.md) for full command/skill reference and per-tool prerequisites, or [`plugins/claude-fluency/HOWTOUSE.md`](plugins/claude-fluency/HOWTOUSE.md) for a worked example of every command, skill, and agent — both ship with the plugin on install.
+
+## Not comfortable with a terminal?
+
+Four commands have copy-paste versions that run in the regular claude.ai chat — no terminal, no plugin, no install:
+
+- [`docs/no-cli-prompt-master.md`](docs/no-cli-prompt-master.md)
+- [`docs/no-cli-humanize.md`](docs/no-cli-humanize.md)
+- [`docs/no-cli-mom.md`](docs/no-cli-mom.md) — works fully; attach your transcript file to the chat
+- [`docs/no-cli-timesheet.md`](docs/no-cli-timesheet.md) — manual-input version; the real command auto-scans git history, this one asks what you worked on instead, since a plain chat can't read your local repos
+
+Everything else (`/security-scan`, `/pr-description`, `/adr`, `/create-pptx`, the automatic git-scanning `/timesheet`) genuinely needs file/git access, so it needs the real Claude Code app — [`docs/beginner-install-guide.md`](docs/beginner-install-guide.md) is a from-scratch walkthrough assuming zero terminal experience.
 
 ## Install
 
