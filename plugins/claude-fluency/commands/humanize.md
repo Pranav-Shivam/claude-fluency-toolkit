@@ -44,9 +44,9 @@ Don't treat this as a find-and-replace on banned words — that just produces di
 
 ### Code — comments, docstrings, commit messages
 - Touch **only** comments, docstrings, commit messages, and (if explicitly asked) identifier naming style. Never alter logic, control flow, or behavior — this isn't a refactor.
-- AI-written comments tend to narrate the obvious ("// increment counter" above `counter++`) or over-explain. Cut comments that just restate the code; keep/rewrite the ones that explain *why*, not *what*.
+- AI-written comments tend to narrate the obvious ("// increment counter" above `counter++`) or over-explain — commenting every line rather than only the non-obvious logic is itself a tell. Cut comments that just restate the code (including ones that restate the function/variable name in prose, e.g. "// This function calculates the total" above `calculateTotal()`); keep/rewrite the ones that explain *why*, not *what*.
 - AI docstrings often list every parameter with padded boilerplate even for a two-line function. Match the comment density to what the code actually needs.
-- Commit messages: AI defaults to a very recognizable shape ("This commit adds X, which improves Y by doing Z"). Real commit messages are often terser and more specific ("fix off-by-one in pagination cursor").
+- Commit messages: AI defaults to a very recognizable shape ("This commit adds X, which improves Y by doing Z") or a narrative changelog-essay body ("In this commit, improvements were made to..."). Real commit messages are terser, imperative-mood, and specific ("fix off-by-one in pagination cursor"), and explain *why* the change was made rather than mechanically restating the diff. Watch for passive/nominalized phrasing ("Improvements were made to X" instead of "Fix X"), and for emoji-prefixed commits (Gitmoji-style) showing up by default when the repo's own history doesn't use that convention.
 - Confirm to the user explicitly that behavior is unchanged — ideally show a diff, not just the new file.
 
 ### Documents, README, markdown
@@ -56,8 +56,10 @@ Don't treat this as a find-and-replace on banned words — that just produces di
 
 ### Email / chat messages
 - AI emails over-structure short messages (greeting paragraph, body paragraph, summary paragraph, sign-off) for things that would be two sentences from a person.
+- "I hope this email/message finds you well" as an opener, and "kindly let me know" / "please don't hesitate to reach out" as closers, are close to hard AI signatures at this point — cut them rather than soften them.
 - Cut the reflexive closing recap ("To summarize, I wanted to...") on anything short enough that summarizing it is redundant.
-- Match register to what the user actually writes like elsewhere if you have context on that (e.g. from earlier in the conversation) — don't impose a generic "professional" voice if their real voice is more casual.
+- In chat specifically, watch for restating the question before answering it ("Great question! To answer whether X, let's first look at...") — a person just answers.
+- Match register to what the user actually writes like elsewhere if you have context on that (e.g. from earlier in the conversation) — don't impose a generic "professional" voice if their real voice is more casual. A tone that would fit "any situation" equally well is itself a tell; real email is calibrated to the specific relationship.
 
 ### General prose / reports / essays
 - This is where the vocabulary and structure patterns in `references/humanize-ai-tells.md` matter most — read it before rewriting anything substantial.
