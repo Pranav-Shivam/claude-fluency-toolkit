@@ -2,6 +2,14 @@
 
 Tracks `version` in `.claude-plugin/plugin.json`. Bump it and add an entry here in the same commit as any user-facing change — see root `CLAUDE.md`.
 
+## 0.9.0 — 2026-09-08
+
+- Add `/humanize` — rewrites AI-generated/AI-assisted writing (prose, docs, README/markdown, email, chat, commit messages, code comments/docstrings) so it reads like a person wrote it: cuts mechanical vocabulary, hedge-stacking, and repetitive structure. Scoped to writing quality only — explicitly refuses AI-detector evasion (Turnitin/GPTZero/etc.) and watermark/provenance stripping, never fabricates a human backstory or degrades content to fake imperfection. Reference tell-list lives in `references/humanize-ai-tells.md`. `SessionStart` now lists it alongside the other commands so it's surfaced every session.
+
+## 0.8.0 — 2026-09-08
+
+- Add `/prompt-master` — turns a rough idea into one paste-ready prompt for a named AI tool (Claude/Claude Code, GPT-5.x, reasoning-native models, Cursor/Windsurf/Cline, Midjourney/SD/DALL-E, ComfyUI) or decompiles/adapts/splits an existing prompt. Confirms the target tool, asks at most 3 clarifying questions, strips pasted credentials. Reference templates (RTF, CO-STAR, RISEN, CRISPE, few-shot, file-scope, agent-brief, visual, image-edit, ComfyUI, decompiler) live in `references/prompt-master-templates.md`, loaded one at a time on demand. `SessionStart` now lists it alongside the other commands so it's surfaced every session.
+
 ## 0.7.2 — 2026-09-07
 
 - Add `pr-watch-catchup.sh` `SessionStart` hook: if the machine was asleep/off at a scheduled pr-watch fire time, the missed check now runs automatically on the next Claude Code session start instead of being silently skipped until the next scheduled slot. Staleness is `STATE_FILE` mtime vs. new `INTERVAL_HOURS` config field, self-limiting (a catch-up run resets the mtime).

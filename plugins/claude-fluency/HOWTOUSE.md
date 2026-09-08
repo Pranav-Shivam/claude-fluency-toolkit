@@ -121,6 +121,54 @@ auto-assignment of the "Assigned" status...
 
 Follow-ups work conversationally: *"regenerate Tuesday, mention the migration script"*, *"make it terser"*, *"extend to Friday"*.
 
+### `/prompt-master <rough idea>`
+
+Turns a rough idea into one paste-ready prompt for a named target tool. Confirms the tool, asks up to 3 clarifying questions, silently fixes vague verbs/missing success criteria/no output format, strips any pasted credentials.
+
+```text
+/prompt-master write a Cursor prompt to fix a null-check bug in auth.ts
+```
+
+Output:
+```
+File: src/auth/auth.ts
+Function: validateSession
+
+Current behavior: throws when `session.user` is undefined instead of
+returning an "unauthenticated" result.
+Desired change: return { authenticated: false } when session.user is
+missing, instead of throwing.
+
+Scope: only modify validateSession. Do NOT touch: token refresh logic,
+exported types.
+Constraints: TypeScript, no new dependencies, preserve the function signature.
+Done when: calling validateSession with a session that has no user
+returns { authenticated: false } instead of throwing.
+```
+`Cursor — added file/function scope, a do-not-touch list, and a binary done condition.`
+
+Also handles decompiling an existing prompt: *"split this into two agentic prompts"*, *"simplify this Midjourney prompt"*, *"adapt this ChatGPT prompt for Claude Code"*.
+
+### `/humanize [text or file]`
+
+Rewrites AI-sounding writing so it reads like a person wrote it — cuts hedge-stacking, generic vocabulary, and formulaic structure. Also auto-fires on phrases like "this reads like a robot" without the slash. Writing-quality only: won't try to beat AI-detection classifiers or strip watermarks, won't invent a human backstory or fake typos.
+
+```text
+/humanize this reads like ChatGPT wrote it, make it sound like a person
+
+It's important to note that our platform leverages a robust, seamless
+architecture to empower teams and unlock transformative outcomes.
+```
+
+Output:
+```
+Our platform's architecture is solid and gets out of your way, so
+teams can actually get things done.
+```
+`Cut the hedge opener, swapped "leverages/robust/seamless/empower/unlock/transformative" for plain phrasing, dropped a sentence's worth of padding.`
+
+Works the same on code comments/docstrings (touches only comments, never logic — shown as a diff) and commit messages (cuts the "This commit adds X, which improves Y by doing Z" shape).
+
 ### `/pr-setup`
 
 Run once per repo before `/pr-review` or `pr-comments`. Detects whether your repo is on GitHub, GitLab, or Azure DevOps from `git remote -v`, checks whether you're already authenticated, and if not, tells you the exact command to run — never a vague "set up credentials first."
@@ -246,3 +294,5 @@ Not called directly — `/security-scan` dispatches all 11 in parallel. Listed h
 | Review a PR end-to-end | "Review PR #<id>" (pr-review skill) |
 | Read PR discussion threads | "Show comments on PR #<id>" (pr-comments skill) |
 | Generate today's timesheet line | `/timesheet` |
+| Write a paste-ready prompt for another AI tool | `/prompt-master <rough idea>` |
+| Rewrite AI-sounding text/code/commits to sound human | `/humanize [text or file]` |

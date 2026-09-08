@@ -1,6 +1,6 @@
 # claude-fluency
 
-One plugin, five toolkits: engineering principles + safety hooks, a security audit fleet, devops/knowledge-graph skills, document generation, and timesheet generation.
+One plugin, seven toolkits: engineering principles + safety hooks, a security audit fleet, devops/knowledge-graph skills, document generation, timesheet generation, prompt engineering, and writing style.
 
 See [`HOWTOUSE.md`](HOWTOUSE.md) for a runnable example of every command, skill, and agent listed below.
 
@@ -55,6 +55,14 @@ See [`HOWTOUSE.md`](HOWTOUSE.md) for a runnable example of every command, skill,
 
 - **Command: `/timesheet [last week | YYYY-MM-DD [YYYY-MM-DD]]`** — scans every repo in your config for the requested date range, filters out inactive days, and synthesizes each remaining day into a `Day, DD Mon  •  8:00 hrs` entry plus a 3–6 sentence paragraph.
 
+### Prompt engineering
+
+- **Command: `/prompt-master <rough idea>`** — turns a rough idea into one paste-ready prompt for a named target tool (Claude/Claude Code, GPT-5.x, reasoning-native models, Cursor/Windsurf/Cline, Midjourney/SD/DALL-E, ComfyUI), or breaks down/adapts/simplifies/splits an existing prompt. Confirms the target tool, asks at most 3 clarifying questions, silently fixes vague verbs/missing success criteria/no output format, strips pasted credentials before writing anything. Reference templates (RTF, CO-STAR, RISEN, CRISPE, few-shot, file-scope, agent-brief, visual, image-edit, ComfyUI, decompiler) load one at a time from `references/prompt-master-templates.md` — never the whole file.
+
+### Writing style
+
+- **Command: `/humanize [text or file]`** — rewrites AI-generated or AI-assisted writing (prose, docs, README/markdown, email, chat, commit messages, code comments/docstrings) so it reads like a person wrote it, by cutting mechanical vocabulary, hedge-stacking, and repetitive rhythm. Scoped to writing quality only — explicitly will not evade AI-detection classifiers (Turnitin/GPTZero/etc.) or strip watermark/provenance metadata, never fabricates a human backstory, never degrades content to fake imperfection. Shows a summary (or diff, for code) of what changed so nothing substantive shifts unnoticed. Auto-fires on phrases like "make this sound less like ChatGPT," not just the slash form. Tell-list lives in `references/humanize-ai-tells.md`.
+
 ## Setup prerequisites
 
 - **Engineering workflow hooks** — `jq` on `PATH` (safety hook falls back to regex if absent); `bash` (POSIX-ish, not `sh`); for notifications, `notify-send` (Linux), AppleScript/`osascript` (macOS, built in), or `powershell.exe` reachable from WSL/Git Bash (Windows). The force-push block requires a literal `--yes-i-mean-it` flag as a deliberate friction point — adjust the sentinel in `scripts/pre-tool-safety.sh` if needed. The `rm -rf` check allowlists common temp/build dirs (`/tmp`, `node_modules`, `dist`, `build`, `.cache`, `__pycache__`, `.next`, `venv`, `.venv`).
@@ -65,6 +73,8 @@ See [`HOWTOUSE.md`](HOWTOUSE.md) for a runnable example of every command, skill,
 - **`/mom`** — `.txt`/`.pdf` need no setup; `.docx` needs `pandoc` (preferred), `python-docx`, or `unzip` on `PATH`.
 - **`/create-pptx`** — requires `python3` with `python-pptx` (`pip install python-pptx`). `.docx` uses the same extraction chain as `/mom`.
 - **`/adr`** — no extra setup; writable `docs/adr/` directory (created automatically if missing).
+- **`/prompt-master`** — no extra setup or credentials; reads `references/prompt-master-templates.md` from the plugin tree on demand.
+- **`/humanize`** — no extra setup or credentials; reads `references/humanize-ai-tells.md` from the plugin tree on demand.
 - **`timesheet`** — config-driven, no hardcoded paths. Create `.claude/timesheet.config.json` (or `~/.claude/timesheet.config.json` for a global default):
 
 ```json
@@ -101,4 +111,8 @@ Requires `git`, `find`, and `stat` on `PATH` — no other tooling.
 
 /timesheet
 /timesheet last week
+
+/prompt-master write a Cursor prompt to fix a null-check bug in auth.ts
+
+/humanize this reads like ChatGPT wrote it, make it sound like a person
 ```
