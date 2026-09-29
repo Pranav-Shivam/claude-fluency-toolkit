@@ -2,6 +2,10 @@
 
 Tracks `version` in `.claude-plugin/plugin.json`. Bump it and add an entry here in the same commit as any user-facing change — see root `CLAUDE.md`.
 
+## 0.11.0 — 2026-09-29
+
+- Add `/today-brief` skill, auto-installed. New `SessionStart` hook `install-daily-brief.sh` copies the OS-matching variant (`daily-brief/unix/` for Linux/macOS, `daily-brief/windows/` for Windows via Git Bash) into `~/.claude/skills/today-brief/`. Silent when current; prints one line on install/update (restart Claude Code once to pick it up). Never overwrites a `today-brief` skill you created yourself — only ones it installed (tracked by a `.installed-by-claude-fluency` marker). Windows note: if the PowerShell tool is unavailable, set `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` in `~/.claude/settings.json`; the Windows variant is untested on real Windows.
+
 ## 0.10.0 — 2026-09-08
 
 - `/prompt-master`: deepened against current official docs (Anthropic, OpenAI, Google, Cursor, Midjourney/Flux/SD, Sora/Veo). Corrected the GPT-5.x tool shape — it's tagged sections (`<context_gathering>`, `<persistence>`, `<tool_preambles>`, `<code_editing_rules>`, `<self_reflection>`, GPT-5.2's `<design_and_scope_constraints>`) plus independent `reasoning_effort`/`verbosity` dials, not "Goal, Context, Constraints, Done." Added a Gemini tool shape (previously missing), a real reasoning-native-model detail (`Formatting re-enabled` for markdown), Cursor's `.cursorrules` → `.mdc` migration, a GitHub Copilot shape, current Midjourney params (`--oref`/`--ow` Omni Reference), Flux/SD3 negative-prompt caveats, and a proper video section (Sora 2 / Veo 3.1 structure, audio channels, timestamp prompting). New techniques: meta-prompting, self-reflection rubric, quote-grounding. New silent-fixes: contradictory constraints, stale defensive boilerplate, indirect injection via tool-sourced content, hardcoding past visible tests. 5 new templates (L–P: GPT-5.x agentic, self-reflection rubric, untrusted-content wrapper, Gemini, video).

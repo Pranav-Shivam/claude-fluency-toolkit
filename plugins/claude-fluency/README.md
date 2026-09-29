@@ -55,6 +55,10 @@ See [`HOWTOUSE.md`](HOWTOUSE.md) for a runnable example of every command, skill,
 
 - **Command: `/timesheet [last week | YYYY-MM-DD [YYYY-MM-DD]]`** — scans every repo in your config for the requested date range, filters out inactive days, and synthesizes each remaining day into a `Day, DD Mon  •  8:00 hrs` entry plus a 3–6 sentence paragraph.
 
+### Daily brief
+
+- **Skill: `/today-brief [focus]`** — writes five dated markdown files (what's new, follow-up, architecture deep dive, DSA practice, reading) to `~/today-brief/YYYY-MM-DD/` (override with `TODAY_BRIEF_DIR`). Installed automatically on first session after plugin install by the `install-daily-brief.sh` `SessionStart` hook, using the Linux/macOS or Windows variant for your OS; restart Claude Code once to load it. Windows needs the PowerShell tool (`CLAUDE_CODE_USE_POWERSHELL_TOOL=1` if unavailable). A `today-brief` skill you wrote yourself is never overwritten.
+
 ### Prompt engineering
 
 - **Command: `/prompt-master <rough idea>`** — turns a rough idea into one paste-ready prompt for a named target tool (Claude/Claude Code, GPT-5.x, Gemini, reasoning-native models, Cursor/Windsurf/Cline/Copilot, Midjourney/SD/Flux/DALL-E, Sora/Veo/Runway, ComfyUI), or breaks down/adapts/simplifies/splits an existing prompt. Tool shapes are checked against each vendor's current official docs (e.g. GPT-5.x's actual tagged-section format, not a generic outline). Confirms the target tool, asks at most 3 clarifying questions, silently fixes vague verbs/missing success criteria/contradictory constraints/injection surface, strips pasted credentials before writing anything. 16 reference templates (RTF, CO-STAR, RISEN, CRISPE, few-shot, file-scope, agent-brief, visual, image-edit, ComfyUI, decompiler, GPT-5.x agentic, self-reflection rubric, untrusted-content wrapper, Gemini, video) load one at a time from `references/prompt-master-templates.md` — never the whole file.
