@@ -69,16 +69,16 @@ No args. Orchestrates the 11-agent audit fleet (`auth`, `config`, `crypto-tls`, 
 
 Returns one report grouped by severity (critical/high/medium/low), plus a separate style/lint section for emoji hygiene. Each agent states a coverage gap explicitly if its underlying tool (`bandit`, `semgrep`, `trufflehog`, `checkov`, etc.) isn't on `PATH` — see [README prerequisites](README.md#prerequisites).
 
-### `/mom <file>`
+### `/mom <file> [brief] [internal] [followup] [docx]`
 
-Turns a meeting transcript (`.docx`, `.pdf`, `.txt`) into a Minutes of Meeting doc: discussion points, decisions, action items (owner + due date), blockers, next steps.
+Turns a meeting transcript or AI recap (`.docx`, `.pdf`, `.txt`, `.vtt`, `.srt`) into a client-safe Minutes of Meeting: summary, discussion topics, decisions, action items (owner + due date + context), open items, chat notes, next steps. Ends with a private **Review before sending** block flagging TBD owners, unclear spellings, contradictions, and omitted internal-only content.
 
 ```text
-/mom transcripts/2026-08-10-standup.txt
-/mom "Q3 Planning Call.docx"
+/mom transcripts/2026-08-10-standup.txt brief
+/mom "Q3 Planning Call.docx" followup docx
 ```
 
-Any owner/deadline not actually stated in the transcript is marked **TBD** — never invented.
+Any owner/deadline not actually stated in the transcript is marked **TBD** — never invented. Switches: `brief` (summary + decisions + actions only), `internal` (no client-safe softening), `followup` (adds a cover email), `docx` (also writes a `.docx`, needs `pandoc`).
 
 ### `/create-pptx <content-file> [--template <template-file>]`
 

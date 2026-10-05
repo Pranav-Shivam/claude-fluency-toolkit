@@ -86,7 +86,7 @@ Then, to drop the marketplace itself:
 - **Engineering workflow hooks** — `jq` on `PATH` (falls back to regex extraction if absent); `bash` for the hook scripts.
 - **Security fleet** — no tool is bundled; each agent uses whichever of `bandit`, `semgrep`, `pip-audit`, `safety`, `npm audit`, `trufflehog`, `gitleaks`, `detect-secrets`, `checkov`, `sslyze` are on `PATH`, and explicitly reports a coverage gap for any that are missing; `lint-agent` needs only `Grep`.
 - **Devops skills** — `pr-review`/`pr-comments` need auth for whichever Git host your repo is on (GitHub, GitLab, or Azure DevOps); run `/pr-setup` to check and get the exact setup command. A graph-building implementation you supply for `graphify`.
-- **Document generation** — `/mom` needs no extra setup for `.txt`/`.pdf`; `.docx` needs `pandoc`, `python-docx`, or `unzip` on `PATH`. `/create-pptx` requires `python3` with `python-pptx` installed (`pip install python-pptx`).
+- **Document generation** — `/mom` needs no extra setup for `.txt`/`.pdf`/`.vtt`/`.srt`; `.docx` input needs `pandoc`, `python-docx`, or `unzip` on `PATH`, and the `docx` output switch needs `pandoc`. `/create-pptx` requires `python3` with `python-pptx` installed (`pip install python-pptx`).
 - **Timesheet** — `git`, `find`, `stat` on `PATH`; a `.claude/timesheet.config.json` you create listing your repos, authors, and display names.
 
 See [`plugins/claude-fluency/README.md`](plugins/claude-fluency/README.md) for detail.

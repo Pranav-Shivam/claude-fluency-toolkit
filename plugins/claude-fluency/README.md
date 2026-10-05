@@ -47,7 +47,7 @@ See [`HOWTOUSE.md`](HOWTOUSE.md) for a runnable example of every command, skill,
 
 ### Document generation
 
-- **Command: `/mom <file>`** — reads a meeting transcript (`.docx`, `.pdf`, or `.txt`) and outputs a clean Markdown MoM (discussion points, decisions, action items with owner/due date, blockers, next steps). Marks unstated owner/deadline **TBD** instead of inventing one.
+- **Command: `/mom <file> [brief|internal|followup|docx]`** — reads a meeting transcript or AI recap (`.docx`, `.pdf`, `.txt`, `.vtt`, `.srt`) and outputs a client-safe Markdown MoM (summary, discussion topics, decisions, action items with owner/due date, open items, chat notes, next steps) plus a private review-before-sending block. Marks unstated owner/deadline **TBD** instead of inventing one.
 - **Command: `/create-pptx <content-file> [--template <template-file>]`** — plans a slide outline and generates a `.pptx` deck via `python-pptx`. A `--template` `.pptx` supplies the design base (fonts, colors, header/footer, logo). Never copies large paragraphs verbatim or invents facts.
 - **Command: `/adr <short decision title>`** — drafts a Nygard-style ADR from the current conversation/diff, auto-numbers it against `docs/adr/`, and writes `docs/adr/00XX-kebab-case-title.md`. Marks unstated figures **TBD**.
 
@@ -74,7 +74,7 @@ See [`HOWTOUSE.md`](HOWTOUSE.md) for a runnable example of every command, skill,
 - **`pr-review` / `pr-comments`** — cover GitHub, GitLab, and Azure DevOps, each with its own tested REST/CLI section in the skill files. None of the credentials are included — run `/pr-setup` to check what's already configured and get the exact command for what's missing (`gh auth login`, `glab auth login`, or an Azure DevOps PAT + `az devops configure`). Bitbucket and other hosts have no tested recipe yet.
 - **`/pr-watch-setup`** — needs `az` CLI on `PATH` and either an existing `az devops` login or a PAT you provide during setup (`Code (Read & Write)` scope). Linux/macOS use system `cron` (must be running — `systemctl is-active cron` / `launchd` is always on for macOS) and, for the terminal it opens, one of `gnome-terminal`/`x-terminal-emulator`/`xterm` (Linux) or Terminal.app/iTerm2 (macOS). Windows uses `schtasks` and opens a new `powershell` window — less battle-tested than the Linux/macOS path.
 - **`graphify`** — no dependency by itself, but produces nothing until connected to a real graph-building implementation.
-- **`/mom`** — `.txt`/`.pdf` need no setup; `.docx` needs `pandoc` (preferred), `python-docx`, or `unzip` on `PATH`.
+- **`/mom`** — `.txt`/`.pdf`/`.vtt`/`.srt` need no setup; the `docx` output switch needs `pandoc`; `.docx` needs `pandoc` (preferred), `python-docx`, or `unzip` on `PATH`.
 - **`/create-pptx`** — requires `python3` with `python-pptx` (`pip install python-pptx`). `.docx` uses the same extraction chain as `/mom`.
 - **`/adr`** — no extra setup; writable `docs/adr/` directory (created automatically if missing).
 - **`/prompt-master`** — no extra setup or credentials; reads `references/prompt-master-templates.md` from the plugin tree on demand.

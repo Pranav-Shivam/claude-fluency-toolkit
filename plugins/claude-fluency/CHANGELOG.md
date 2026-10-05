@@ -2,6 +2,10 @@
 
 Tracks `version` in `.claude-plugin/plugin.json`. Bump it and add an entry here in the same commit as any user-facing change — see root `CLAUDE.md`.
 
+## 0.12.0 — 2026-10-05
+
+- `/mom`: rewritten for client-facing minutes. Adds 10 accuracy rules (no inferred owners, no dates computed from today, suggestions never promoted to decisions, completed work vs. action items vs. unassigned concerns, contradictions flagged not resolved), client-safe writing rules (neutral tone, internal-only material omitted), a new output structure (Subject line, attendees, narrative discussion topics, action table with Context column, Open Items, Chat Notes), and a private "Review before sending" block. New switches: `brief`, `internal`, `followup`, `docx`. Accepts `.vtt`/`.srt` and AI-generated recaps. `docs/no-cli-mom.md` updated to the same prompt, with a fill-once MY CONTEXT block for attendees and glossary.
+
 ## 0.11.0 — 2026-09-29
 
 - Add `/today-brief` skill, auto-installed. New `SessionStart` hook `install-daily-brief.sh` copies the OS-matching variant (`daily-brief/unix/` for Linux/macOS, `daily-brief/windows/` for Windows via Git Bash) into `~/.claude/skills/today-brief/`. Silent when current; prints one line on install/update (restart Claude Code once to pick it up). Never overwrites a `today-brief` skill you created yourself — only ones it installed (tracked by a `.installed-by-claude-fluency` marker). Windows note: if the PowerShell tool is unavailable, set `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` in `~/.claude/settings.json`; the Windows variant is untested on real Windows.
