@@ -149,6 +149,15 @@ returns { authenticated: false } instead of throwing.
 
 Also handles decompiling an existing prompt: *"split this into two agentic prompts"*, *"simplify this Midjourney prompt"*, *"adapt this ChatGPT prompt for Claude Code"*.
 
+### `/conversation`
+
+Switches the rest of the session to spoken-style replies: 2–4 plain sentences, no bullets/tables/code unless you ask, and each reply ends on the next concrete step. For a real mic-and-speaker loop, run `voice/voice_chat.py` (setup in `voice/README.md`).
+
+```text
+/conversation
+what does the security-scan command do?
+```
+
 ### `/humanize [text or file]`
 
 Rewrites AI-sounding writing so it reads like a person wrote it — cuts hedge-stacking, generic vocabulary, and formulaic structure. Also auto-fires on phrases like "this reads like a robot" without the slash. Writing-quality only: won't try to beat AI-detection classifiers or strip watermarks, won't invent a human backstory or fake typos.
@@ -296,3 +305,4 @@ Not called directly — `/security-scan` dispatches all 11 in parallel. Listed h
 | Generate today's timesheet line | `/timesheet` |
 | Write a paste-ready prompt for another AI tool | `/prompt-master <rough idea>` |
 | Rewrite AI-sounding text/code/commits to sound human | `/humanize [text or file]` |
+| Spoken-style replies (optional voice loop) | `/conversation` |

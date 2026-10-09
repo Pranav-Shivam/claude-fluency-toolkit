@@ -2,6 +2,10 @@
 
 Tracks `version` in `.claude-plugin/plugin.json`. Bump it and add an entry here in the same commit as any user-facing change — see root `CLAUDE.md`.
 
+## 0.13.0 — 2026-10-09
+
+- Add `/conversation` — switches the session to spoken-style replies (2–4 plain sentences, no lists/tables/code unless asked, ends on the next concrete step). Add `voice/voice_chat.py` + `voice/README.md`: an optional push-to-talk loop (arecord -> whisper.cpp -> `claude -p` -> Piper -> aplay) that keeps one Claude session across turns and applies the `/conversation` rules. Linux as shipped; every binary overridable by env var. `SessionStart` lists the new command.
+
 ## 0.12.0 — 2026-10-05
 
 - `/mom`: rewritten for client-facing minutes. Adds 10 accuracy rules (no inferred owners, no dates computed from today, suggestions never promoted to decisions, completed work vs. action items vs. unassigned concerns, contradictions flagged not resolved), client-safe writing rules (neutral tone, internal-only material omitted), a new output structure (Subject line, attendees, narrative discussion topics, action table with Context column, Open Items, Chat Notes), and a private "Review before sending" block. New switches: `brief`, `internal`, `followup`, `docx`. Accepts `.vtt`/`.srt` and AI-generated recaps. `docs/no-cli-mom.md` updated to the same prompt, with a fill-once MY CONTEXT block for attendees and glossary.

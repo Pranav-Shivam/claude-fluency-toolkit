@@ -66,6 +66,7 @@ See [`HOWTOUSE.md`](HOWTOUSE.md) for a runnable example of every command, skill,
 ### Writing style
 
 - **Command: `/humanize [text or file]`** — rewrites AI-generated or AI-assisted writing (prose, docs, README/markdown, email, chat, commit messages, code comments/docstrings) so it reads like a person wrote it, by cutting mechanical vocabulary, hedge-stacking, and repetitive rhythm. Flags on clustering (3+ tells in a passage), not single ordinary word choices — "robust error handling" alone isn't a tell. Scoped to writing quality only — explicitly will not evade AI-detection classifiers (Turnitin/GPTZero/etc.) or strip watermark/provenance metadata, never fabricates a human backstory, never degrades content to fake imperfection. Shows a summary (or diff, for code) of what changed so nothing substantive shifts unnoticed. Auto-fires on phrases like "make this sound less like ChatGPT," not just the slash form. Tell-list — including copula avoidance, negative parallelism, and per-model notes — lives in `references/humanize-ai-tells.md`.
+- **Command: `/conversation`** — switches the session to spoken-style replies: 2–4 plain sentences, no lists/tables/code blocks unless asked, describes files it creates instead of pasting them, asks short clarifying questions, ends on the next concrete step. Companion `voice/voice_chat.py` adds push-to-talk mic input (whisper.cpp) and speaker output (Piper) around `claude -p`, keeping one session across turns.
 
 ## Setup prerequisites
 
@@ -78,6 +79,7 @@ See [`HOWTOUSE.md`](HOWTOUSE.md) for a runnable example of every command, skill,
 - **`/create-pptx`** — requires `python3` with `python-pptx` (`pip install python-pptx`). `.docx` uses the same extraction chain as `/mom`.
 - **`/adr`** — no extra setup; writable `docs/adr/` directory (created automatically if missing).
 - **`/prompt-master`** — no extra setup or credentials; reads `references/prompt-master-templates.md` from the plugin tree on demand.
+- **`/conversation`** — no setup for the text mode. The optional voice loop (`voice/voice_chat.py`) needs whisper.cpp, Piper, and ALSA `arecord`/`aplay`; see `voice/README.md`.
 - **`/humanize`** — no extra setup or credentials; reads `references/humanize-ai-tells.md` from the plugin tree on demand.
 - **`timesheet`** — config-driven, no hardcoded paths. Create `.claude/timesheet.config.json` (or `~/.claude/timesheet.config.json` for a global default):
 
