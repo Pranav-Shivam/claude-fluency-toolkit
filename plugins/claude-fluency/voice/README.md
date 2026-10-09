@@ -17,8 +17,10 @@ cd ~/whisper.cpp && cmake -B build && cmake --build build -j
 bash ./models/download-ggml-model.sh base.en      # or small.en for accuracy
 
 # Text-to-speech
-pip install piper-tts
-python3 -m piper.download_voices en_US-lessac-medium   # saves en_US-lessac-medium.onnx in the current dir
+python3 -m venv ~/voice-venv                      # needed on Ubuntu 24+ / Debian 12+ (system pip is locked)
+~/voice-venv/bin/pip install piper-tts
+mkdir -p ~/piper-voices && cd ~/piper-voices
+~/voice-venv/bin/python -m piper.download_voices en_US-lessac-medium
 ```
 
 With a GPU, swap whisper.cpp for `faster-whisper` and set `WHISPER_BIN` to a wrapper that prints the transcript.
@@ -26,7 +28,8 @@ With a GPU, swap whisper.cpp for `faster-whisper` and set `WHISPER_BIN` to a wra
 ## Run
 
 ```bash
-export PIPER_MODEL=/path/to/en_US-lessac-medium.onnx
+export PIPER_BIN=~/voice-venv/bin/piper
+export PIPER_MODEL=~/piper-voices/en_US-lessac-medium.onnx
 export WHISPER_BIN=~/whisper.cpp/build/bin/whisper-cli
 python3 voice_chat.py
 ```

@@ -2,6 +2,10 @@
 
 Tracks `version` in `.claude-plugin/plugin.json`. Bump it and add an entry here in the same commit as any user-facing change — see root `CLAUDE.md`.
 
+## 0.13.1 — 2026-10-09
+
+- `voice/README.md`: install Piper in a virtualenv (plain `pip install piper-tts` fails on Ubuntu 24+/Debian 12+), and set `PIPER_BIN` to the venv's `piper`. Steps verified end to end (Piper -> wav -> whisper.cpp transcript).
+
 ## 0.13.0 — 2026-10-09
 
 - Add `/conversation` — switches the session to spoken-style replies (2–4 plain sentences, no lists/tables/code unless asked, ends on the next concrete step). Add `voice/voice_chat.py` + `voice/README.md`: an optional push-to-talk loop (arecord -> whisper.cpp -> `claude -p` -> Piper -> aplay) that keeps one Claude session across turns and applies the `/conversation` rules. Linux as shipped; every binary overridable by env var. `SessionStart` lists the new command.
